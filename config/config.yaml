@@ -1,0 +1,26 @@
+# Environment variables with the JOB_HUNTER_ prefix override values here; see
+# docs/CONFIGURATION.md for using a deployment-specific configuration file.
+app:
+  name: Job-Hunter
+  environment: development
+  debug: false
+  version: 0.1.0
+
+server:
+  host: 0.0.0.0
+  port: 8000
+  root_path: ""
+
+database:
+  url: sqlite:///data/job-hunter.db
+  echo: false
+
+logging:
+  level: INFO
+  json_logs: true
+
+security:
+  trusted_hosts:
+    - localhost
+    - 127.0.0.1
+    - testserver

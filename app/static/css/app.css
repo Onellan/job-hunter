@@ -1,0 +1,21 @@
+/* PicoCSS supplies the base UI. These additions define application-specific layout. */
+
+body {
+  min-height: 100vh;
+}
+
+main.container {
+  padding-block: 4rem;
+}
+
+.hero {
+  max-width: 48rem;
+}
+
+.status-card {
+  border-inline-start: 0.25rem solid var(--pico-primary);
+}
+
+.status-card p:last-child {
+  margin-bottom: 0;
+}

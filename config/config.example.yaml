@@ -1,0 +1,24 @@
+# This is a safe starting point for a production-specific configuration file.
+app:
+  name: Job-Hunter
+  environment: production
+  debug: false
+  version: 0.1.0
+
+server:
+  host: 0.0.0.0
+  port: 8000
+  root_path: ""
+
+database:
+  url: sqlite:///data/job-hunter.db
+  echo: false
+
+logging:
+  level: INFO
+  json_logs: true
+
+security:
+  # Add the public hostname used by the reverse proxy.
+  trusted_hosts:
+    - jobs.example.com

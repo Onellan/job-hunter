@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+
+# Local application data
+data/*.db
+data/*.db-*
+data/*.sqlite
+data/*.sqlite-*
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.code-workspace
+Thumbs.db
+.DS_Store
+
+# Local configuration overrides
+config/local.yaml
+.env

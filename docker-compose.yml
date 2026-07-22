@@ -1,0 +1,13 @@
+services:
+  job-hunter:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/srv/app/data
+      - ./config:/srv/app/config:ro
+    environment:
+      JOB_HUNTER_CONFIG_FILE: /srv/app/config/config.yaml
+    restart: unless-stopped
