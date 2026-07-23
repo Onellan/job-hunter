@@ -14,7 +14,8 @@ HTMX; it does not poll provider portals or start background work.
 ## Find and review jobs
 
 The Jobs page filters title, company, and location text in SQLite. It also
-supports source, workplace, bookmarked, and applied filters. Choose one of four
+supports source, workplace, exact employment type, publication age (one to 30
+days), bookmarked, and applied filters. Choose one of four
 allow-listed sort orders: recently seen, recently published, title, or company.
 Results use bounded offset pagination with a maximum of 100 rows per request.
 
@@ -25,15 +26,22 @@ later milestone.
 
 ## Track your workflow
 
-Select jobs to bookmark, remove bookmarks, mark applied, or clear applied.
-Each action changes at most 100 selected jobs. On the job detail page, add a
-private note alongside single-job bookmark and applied controls.
+Select jobs to bookmark, remove bookmarks, mark applied, clear applied, or
+compare two or three jobs against the consented resume profile. Each workflow
+action changes at most 100 selected jobs. On the job detail page, add a private
+note alongside single-job bookmark and applied controls.
 
-Workflow state is local to this installation and is currently shared by every
-browser user because authentication has not yet been introduced. Do not store
-credentials or sensitive personal information in notes. CSRF protection and
-per-user ownership will be added with the authentication milestone; do not
-expose this unauthenticated application to untrusted users.
+Workflow state is local to this installation. When authentication is enabled,
+browser changes require the local session and a CSRF token. Do not store
+credentials or sensitive personal information in notes; do not expose a local
+deployment to untrusted users.
+
+## Feedback and recovery
+
+Browser forms announce validation and successful resume-skill extraction in a
+small live region. Browser-side 4xx and unexpected 5xx failures render a safe
+HTML response with a request reference rather than raw API JSON. The versioned
+`/api/v1` endpoints continue to return JSON errors for API clients.
 
 ## Progressive enhancement
 

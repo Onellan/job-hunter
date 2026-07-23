@@ -4,13 +4,14 @@
   <article>
     <h1>Local access</h1>
     <p>Sign in to your self-hosted Job-Hunter workspace.</p>
+    {% if login_message %}<p class="form-error" role="alert">{{ login_message }}</p>{% endif %}
     <form method="post" action="/login">
-      <label>Username <input name="username" autocomplete="username" required></label>
+      <label>Username <input name="username" value="{{ login_username }}" autocomplete="username" required></label>
       <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
       <button type="submit">Sign in</button>
     </form>
   </article>
-  <article>
+  {% if bootstrap_available %}<article>
     <h2>First-time setup</h2>
     <p>Create the sole local account once. Passwords must contain at least 12 characters.</p>
     <form method="post" action="/login/bootstrap">
@@ -18,6 +19,6 @@
       <label>Password <input name="password" type="password" autocomplete="new-password" required></label>
       <button type="submit" class="secondary">Create account</button>
     </form>
-  </article>
+  </article>{% endif %}
 </section>
 {% endblock %}

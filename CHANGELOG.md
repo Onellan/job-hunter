@@ -6,6 +6,36 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- UI-001 canonicalises blank optional Jobs filters before validation, so an
+  untouched filter form remains a usable workspace view.
+- UI-002 configures HTMX without its runtime inline indicator stylesheet,
+  preserving the strict Content Security Policy during fragment interactions.
+- UI-003 adds browser-native saved-search creation, editing, enablement, manual
+  execution, validation feedback, and bounded provider-run status history.
+- UI-004 adds browser-native provider registration, editing, enablement, and
+  confirmed removal with shared non-secret configuration validation.
+- UI-005 adds browser-native daily and cron schedule lifecycle controls and
+  bounded per-search dispatch history.
+- UI-006 adds a bounded operations view for provider and schedule outcomes,
+  with dashboard links to failures and recent run activity.
+- UI-007 makes narrow navigation wrap with accessible touch targets and keeps
+  matching forms within the viewport.
+- UI-008 adds browser logout/account controls and safe inline local-login
+  feedback while hiding bootstrap after the first owner exists.
+- UI-009 replaces manual job-ID entry with a selected-job comparison action and
+  a normal HTML fallback.
+- UI-010 adds bounded location, employment-type, and publication-age workspace
+  filters plus a reset control.
+- UI-011 adds reusable accessible browser feedback and safe HTML error pages
+  for presentation-route validation and unexpected failures.
+- UI-012 adds active-page navigation semantics plus bounded browser access to
+  privacy-minimised export and notification audit history.
+
+### Changed
+
+- Completed the reproducible Docker and manual browser release checks; the
+  Raspberry Pi target-device performance measurement remains an explicit gate.
+
 - Milestone 1 application foundation with FastAPI, SQLite, YAML settings,
   structured logging, health checks, Docker support, and quality tooling.
 - Milestone 2 provider-neutral job, provider, saved-search, and provider-run

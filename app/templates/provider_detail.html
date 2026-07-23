@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ provider.display_name }} · Providers · {{ application_name }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><h1>{{ provider.display_name }}</h1><p>{{ 'Enabled' if provider.enabled else 'Disabled' }} provider configuration.</p></div><a role="button" class="secondary" href="/providers">All providers</a></section>
+<section class="detail-grid"><article><header><strong>Edit provider</strong></header>{% set action = '/providers/' ~ provider.id %}{% set submit_label = 'Save changes' %}{% set show_code = false %}{% include 'fragments/provider_form.html' %}</article>
+<article><header><strong>Remove provider</strong></header><p>Removal is unavailable when the provider still has execution history.</p><form method="post" action="/providers/{{ provider.id }}/delete"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label class="checkbox-label"><input type="checkbox" name="confirm_delete" value="true"> I understand this removes the provider configuration.</label><button type="submit" class="contrast">Remove provider</button></form></article></section>
+{% endblock %}

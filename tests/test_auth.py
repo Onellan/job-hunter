@@ -58,3 +58,57 @@ def test_enabled_auth_requires_session_csrf_and_rate_limits(settings) -> None:  
             ).status_code
             == 429
         )
+
+
+def test_browser_auth_feedback_and_logout(settings) -> None:  # type: ignore[no-untyped-def]
+    """Browser login keeps safe feedback local and logout invalidates the session."""
+
+    settings.authentication.enabled = True
+    settings.authentication.login_max_attempts = 2
+    engine = create_database_engine(settings.database)
+    SQLModel.metadata.create_all(engine)
+    engine.dispose()
+    with TestClient(create_app(settings)) as client:
+        first_page = client.get("/login")
+        bootstrap = client.post(
+            "/login/bootstrap",
+            data={"username": "owner", "password": "correct-horse-battery"},
+            follow_redirects=False,
+        )
+        after_bootstrap = client.get("/login")
+        authenticated = client.post(
+            "/login",
+            data={"username": "owner", "password": "correct-horse-battery"},
+            follow_redirects=False,
+        )
+        dashboard = client.get("/dashboard")
+        csrf = client.cookies.get("job_hunter_csrf")
+        logged_out = client.post("/logout", data={"csrf_token": csrf}, follow_redirects=False)
+        rejected = client.post(
+            "/login",
+            data={"username": "owner", "password": "wrong-password-123"},
+        )
+        rejected_again = client.post(
+            "/login",
+            data={"username": "owner", "password": "wrong-password-123"},
+        )
+        throttled = client.post(
+            "/login",
+            data={"username": "owner", "password": "wrong-password-123"},
+        )
+
+    assert "First-time setup" in first_page.text
+    assert bootstrap.status_code == 303
+    assert "First-time setup" not in after_bootstrap.text
+    assert rejected.status_code == 401
+    assert "Username or password is incorrect" in rejected.text
+    assert "wrong-password-123" not in rejected.text
+    assert rejected_again.status_code == 401
+    assert throttled.status_code == 429
+    assert "Too many sign-in attempts" in throttled.text
+    assert "retry-after" in throttled.headers
+    assert authenticated.status_code == 303
+    assert "owner" in dashboard.text
+    assert "Sign out" in dashboard.text
+    assert logged_out.status_code == 303
+    assert logged_out.headers["location"] == "/login"

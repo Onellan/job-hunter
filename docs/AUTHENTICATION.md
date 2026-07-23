@@ -21,6 +21,12 @@ The login endpoint also uses a bounded in-process failed-attempt limiter. It is
 intentionally local and resets after a restart, keeping this SQLite-first
 deployment free of another service.
 
+The browser login page preserves only the submitted username on a validation,
+credential, or rate-limit failure; passwords are never rendered back. Once an
+owner exists, first-time setup is hidden. Authenticated pages show the account
+name and a CSRF-protected **Sign out** control that invalidates the server-side
+session and clears both browser cookies.
+
 ## Notifications
 
 Notifications are disabled unless `notifications.enabled` is `true`. Configure
@@ -34,6 +40,10 @@ channel) to verify an enabled channel. `GET /api/v1/notifications/deliveries`
 returns a paginated audit history. The history stores channel, event type,
 outcome, error category, and timestamps only; it never retains recipients,
 payloads, credentials, or webhook URLs.
+
+The browser **Activity** page links to the same paginated notification-history
+metadata. It has no notification test form and never exposes recipients,
+messages, configured values, or secrets.
 
 For email, `notifications.email_url` uses an SMTP URL such as
 `smtps://user:password@mail.example.com?from=jobs@example.com&to=you@example.com`.

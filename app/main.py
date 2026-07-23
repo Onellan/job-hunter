@@ -25,6 +25,7 @@ from app.core.rate_limits import LoginRateLimiter
 from app.database.engine import create_database_engine
 from app.providers.execution import BoundedProviderExecutor
 from app.providers.registry import ProviderRegistry
+from app.routers.audit import router as audit_router
 from app.routers.web import router as web_router
 from app.scheduler.runtime import SchedulerRuntime
 
@@ -101,6 +102,7 @@ def create_app(
     register_exception_handlers(application)
     application.include_router(api_router)
     application.include_router(web_router)
+    application.include_router(audit_router)
     return application
 
 

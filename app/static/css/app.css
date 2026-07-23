@@ -43,8 +43,25 @@ main.container { padding-block: 2rem 4rem; }
 .job-description { white-space: pre-line; overflow-wrap: anywhere; }
 .workflow-buttons { justify-content: flex-start; flex-wrap: wrap; margin-bottom: 1rem; }
 .workflow-buttons form { margin: 0; }
+.logout-form { display: inline; margin: 0; }
+.logout-form button { margin: 0; }
+.search-form { display: grid; gap: 0.75rem; }
+.search-form label, .search-form input, .search-form select { margin-bottom: 0; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; }
+.form-error { color: var(--pico-del-color); font-weight: 600; }
+.status-message { color: var(--pico-ins-color); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .app-header nav { align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; }
+  .app-header nav ul { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+  .app-header nav ul:last-child { width: 100%; }
+  .app-header nav a { min-height: 2.75rem; }
+}
 
 @media (max-width: 700px) {
+  main.container { overflow-wrap: anywhere; }
   .page-heading, .job-detail { align-items: stretch; flex-direction: column; }
   .detail-grid { grid-template-columns: 1fr; }
+  .detail-grid article, .login-page article { min-width: 0; }
+  textarea, input, select { max-width: 100%; }
 }

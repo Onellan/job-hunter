@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Activity · {{ application_name }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><h1>Activity</h1><p>Review privacy-minimised export and notification outcomes.</p></div></section>
+<section class="detail-grid" aria-label="Activity history">
+  <article><header><strong>Export history</strong></header><p>Format, scope, job count, and time only. Exported content is never retained here.</p><a href="/exports/history" role="button">View export history</a></article>
+  <article><header><strong>Notification history</strong></header><p>Safe channel, outcome, and error category only. Recipients, messages, and credentials are never shown.</p><a href="/notifications/history" role="button" class="secondary">View notification history</a></article>
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% if events is defined %}{% set page = events %}{% else %}{% set page = deliveries %}{% endif %}
+{% if page.total > page.limit %}
+<nav class="pagination" aria-label="History pages">
+  {% if page.offset > 0 %}<a href="?offset={{ [page.offset - page.limit, 0] | max }}">Previous</a>{% endif %}
+  <span>Showing {{ page.offset + 1 }}–{{ [page.offset + page.limit, page.total] | min }} of {{ page.total }}</span>
+  {% if page.offset + page.limit < page.total %}<a href="?offset={{ page.offset + page.limit }}">Next</a>{% endif %}
+</nav>
+{% endif %}

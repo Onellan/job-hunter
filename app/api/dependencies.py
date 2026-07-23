@@ -17,6 +17,7 @@ from app.database.repositories import (
     SqliteScheduleRepository,
     SqliteSearchRepository,
 )
+from app.database.repositories.notifications import SqliteNotificationRepository
 from app.database.repositories.resumes import SqliteResumeRepository
 from app.database.repositories.workspace import SqliteDashboardRepository
 from app.exporters.jobs import CsvJobExporter, JsonJobExporter, XlsxJobExporter
@@ -27,6 +28,7 @@ from app.services.exports import ExportService
 from app.services.jobs import JobService
 from app.services.manual_searches import ManualSearchService
 from app.services.matching import ResumeMatchingService
+from app.services.notifications import NotificationService
 from app.services.provider_runs import ProviderRunService
 from app.services.providers import ProviderService
 from app.services.schedules import ScheduleService
@@ -98,6 +100,14 @@ def get_export_service(request: Request) -> ExportService:
         },
         backup_renderer=SqliteBackupExporter(settings.database.url),
     )
+
+
+def get_notification_service(
+    session: Annotated[Session, Depends(get_session)],
+) -> NotificationService:
+    """Return privacy-minimised notification delivery history operations."""
+
+    return NotificationService(SqliteNotificationRepository(session))
 
 
 def get_provider_service(session: Annotated[Session, Depends(get_session)]) -> ProviderService:

@@ -7,6 +7,7 @@
     <title>{% block title %}{{ application_name }}{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+    <meta name="htmx-config" content='{"includeIndicatorStyles":false}'>
     <script defer src="https://unpkg.com/htmx.org@2.0.4"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script defer src="{{ url_for('static', path='js/app.js') }}"></script>
@@ -19,9 +20,14 @@
           <li><a class="brand" href="/dashboard">{{ application_name }}</a></li>
         </ul>
         <ul>
-          <li><a href="/dashboard"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a></li>
-          <li><a href="/jobs"><i data-lucide="briefcase-business" aria-hidden="true"></i> Jobs</a></li>
-          <li><a href="/matching"><i data-lucide="scan-search" aria-hidden="true"></i> Matching</a></li>
+          <li><a href="/dashboard" {% if active_page == 'dashboard' %}aria-current="page"{% endif %}><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a></li>
+          <li><a href="/jobs" {% if active_page == 'jobs' %}aria-current="page"{% endif %}><i data-lucide="briefcase-business" aria-hidden="true"></i> Jobs</a></li>
+          <li><a href="/searches" {% if active_page == 'searches' %}aria-current="page"{% endif %}><i data-lucide="search-check" aria-hidden="true"></i> Searches</a></li>
+          <li><a href="/providers" {% if active_page == 'providers' %}aria-current="page"{% endif %}><i data-lucide="server-cog" aria-hidden="true"></i> Providers</a></li>
+          <li><a href="/matching" {% if active_page == 'matching' %}aria-current="page"{% endif %}><i data-lucide="scan-search" aria-hidden="true"></i> Matching</a></li>
+          <li><a href="/runs" {% if active_page == 'operations' %}aria-current="page"{% endif %}><i data-lucide="activity" aria-hidden="true"></i> Operations</a></li>
+          <li><a href="/activity" {% if active_page == 'activity' %}aria-current="page"{% endif %}><i data-lucide="history" aria-hidden="true"></i> Activity</a></li>
+          {% if current_user %}<li><span>{{ current_user.username }}</span><form class="logout-form" method="post" action="/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit" class="secondary">Sign out</button></form></li>{% endif %}
         </ul>
       </nav>
     </header>

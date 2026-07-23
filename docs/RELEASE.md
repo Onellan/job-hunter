@@ -47,3 +47,17 @@ docker compose build
 ```
 
 Tag only after all checks and target-device evidence pass.
+
+## Local verification evidence (non-target baseline)
+
+On 2026-07-23, Docker Compose rebuilt and started the application successfully
+on Windows 11. The health check returned HTTP 200, the scheduler started, and
+the container reported 71.87 MiB idle memory. The isolated local benchmark
+reported 164.74 ms startup and 638.53 ms dashboard latency. A real-browser
+audit confirmed keyboard access to the skip link, labelled login and Jobs
+controls, active navigation semantics, and no horizontal overflow at 390 px.
+
+This is a development-host baseline only. It does not satisfy the target-device
+release gate: run the command above on the intended Raspberry Pi 4B/1 GB
+deployment and record its OS, Python version, enabled extras, and operating
+system RSS before releasing.

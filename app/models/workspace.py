@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from app.models.job import JobRecord, ProviderCode, WorkplaceType
+from app.models.job import EmploymentType, JobRecord, ProviderCode, WorkplaceType
 
 
 class JobSort(StrEnum):
@@ -26,6 +26,9 @@ class JobWorkspaceQuery(BaseModel):
     text: str | None = Field(default=None, min_length=1, max_length=200)
     source: ProviderCode | None = None
     workplace_type: WorkplaceType | None = None
+    location: str | None = Field(default=None, min_length=1, max_length=300)
+    employment_type: EmploymentType | None = None
+    posted_within_days: int | None = Field(default=None, ge=1, le=30)
     bookmarked: bool | None = None
     applied: bool | None = None
     sort: JobSort = JobSort.RECENT

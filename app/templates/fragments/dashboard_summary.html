@@ -1,9 +1,9 @@
 <section id="dashboard-summary" hx-get="/dashboard/summary" hx-trigger="every 30s" hx-swap="outerHTML">
   <div class="metric-grid" aria-label="Dashboard metrics">
     <article><small>Jobs found today</small><strong>{{ dashboard.jobs_found_today }}</strong></article>
-    <article><small>Last run</small><strong>{{ dashboard.last_run_at.strftime('%Y-%m-%d %H:%M UTC') if dashboard.last_run_at else 'No completed run' }}</strong></article>
+    <article><small>Last run</small><strong><a href="/runs">{{ dashboard.last_run_at.strftime('%Y-%m-%d %H:%M UTC') if dashboard.last_run_at else 'No completed run' }}</a></strong></article>
     <article><small>Providers</small><strong>{{ dashboard.enabled_provider_count }} / {{ dashboard.provider_count }} enabled</strong></article>
-    <article><small>Errors today</small><strong>{{ dashboard.error_count_today }}</strong></article>
+    <article><small>Errors today</small><strong><a href="/runs?status=failed">{{ dashboard.error_count_today }}</a></strong></article>
     <article><small>System status</small><strong class="status-ok">Operational</strong></article>
   </div>
 

@@ -1,87 +1,33 @@
 # Job-Hunter Roadmap
 
-## Milestone 1 — Foundation ✅
+## Completed milestones
 
-- [x] Create the prescribed project structure.
-- [x] Configure FastAPI application factory, Jinja2 landing page, static assets,
-      structured logging, request IDs, and security headers.
-- [x] Configure YAML/Pydantic settings with environment overrides.
-- [x] Configure SQLite/SQLModel engine lifecycle and health endpoint.
-- [x] Add Dockerfile, Docker Compose, non-root container, and CLI entry point.
-- [x] Add tests, Ruff, Black, isort, mypy, pytest, pytest-asyncio, and
-      pre-commit configuration.
-- [x] Add architecture, configuration, deployment, contribution, and changelog
-      documentation.
+- [x] Milestone 1 — Foundation
+- [x] Milestone 2 — Domain and persistence
+- [x] Milestone 3 — Provider platform
+- [x] Milestone 4 — Search workspace
+- [x] Milestone 5 — Export
+- [x] Milestone 6 — Scheduler
+- [x] Milestone 7 — Direct Pnet provider
+- [x] Milestone 8 — Explainable scoring
+- [x] Milestone 9 — Authentication and notifications
+- [x] Milestone 10 — Advanced matching
 
-## Milestone 2 — Domain and Persistence ✅
-
-- [x] Define provider-neutral job, search, provider, and provider-run contracts.
-- [x] Add SQLModel table mappings and an Alembic migration workflow for the
-      first durable schema; production never relies on implicit schema creation.
-- [x] Implement repository protocols, SQLite implementations, and application
-      services that preserve architectural boundaries.
-- [x] Add deterministic, database-backed job identity and idempotent
-      deduplication using stable ID, canonical URL, then fingerprint.
-- [x] Add indexes for identity, source, date, workplace filtering, and run
-      history paths.
-- [x] Expose tested paginated CRUD JSON resources for jobs, searches, providers,
-      and provider runs with lifecycle validation.
-- [x] Document the data model, API contracts, migration operations, and current
-      retention/privacy choices.
-
-## Milestone 3 — Provider Platform ✅
-
-- [x] Add `BaseProvider`, provider registry/discovery, enablement configuration,
-      bounded local execution, and isolated provider-run outcomes.
-- [x] Add the JobSpy adapter behind the standard contract.
-- [x] Add manual search execution and deterministic fake-provider tests.
-
-## Milestone 4 — Search Workspace ✅
-
-- [x] Build dashboard metrics, provider/error status, and recent searches.
-- [x] Build server-rendered search, filter, result, pagination, and job-detail
-      pages with focused HTMX updates.
-- [x] Add bookmarks, applied state, notes, bulk actions, and accessible fallbacks.
-
-## Milestone 5 — Export ✅
-
-- [x] Stream CSV and JSON exports.
-- [x] Add constant-memory XLSX export and SQLite backup export.
-- [x] Support selected-job export, audit events, API endpoints, and UI controls.
-
-## Milestone 6 — Scheduler ✅
-
-- [x] Add APScheduler daily and cron schedules, persisted run history, manual
-      runs, bounded retries, and incremental-search behaviour.
-
-## Milestone 7 — Direct Providers ✅
-
-- [x] Add the Pnet Playwright adapter with explicit browser lifecycle,
-      pagination, parser fixtures, rate limits, retry classification, and
-      low-concurrency safeguards.
-
-## Milestone 8 — Explainable Scoring ✅
-
-- [x] Add deterministic role, skill, salary, remote, leadership, experience,
-      project-management, business-analysis, and Agile scoring.
-- [x] Show reasons, matches, gaps, and confidence; make external AI opt-in.
-
-## Milestone 9 — Authentication and Notifications
-
-- [x] Add password hashing, sessions, CSRF, authorization, secure defaults, and
-      rate limits before exposing state-changing browser workflows.
-- [x] Add opt-in notification adapters (email, Telegram, Teams, Slack) with
-      safe configuration and delivery history.
-
-## Milestone 10 — Advanced Matching
-
-- [x] Add consented resume upload, skill extraction, and job comparison.
+The completed implementation detail for these milestones is retained in the
+architecture and feature documentation under `docs/`, the changelog, and the
+Git history. The completed UI-review tasks UI-001 through UI-012 are summarised
+in `.ai/UI_REVIEW.md`; they are intentionally removed from this active backlog.
 
 ## Milestone 11 — Release Quality
 
-- [ ] Profile memory and latency on target-class hardware (benchmark harness
-      and non-target baseline are available; Raspberry Pi evidence is pending).
-- [ ] Complete accessibility, security, documentation, backup/restore, and
-      deployment checks (automated restore and accessibility checks are in
-      place; the Docker daemon and manual accessibility audit remain pending).
-- [x] Prepare release notes and a reproducible release checklist.
+- [ ] Run `python scripts/benchmark.py --database data/benchmark.db` on the
+      intended Raspberry Pi 4 Model B with 1 GB RAM, using the production-like
+      optional features. Record OS image, Python version, enabled extras, idle
+      operating-system RSS, startup latency, and dashboard latency in
+      `docs/RELEASE.md`.
+  - **Acceptance:** idle RSS is below 100 MB, startup is below 3 seconds, and
+    dashboard latency is below 1 second on that target device.
+- [x] Accessibility, security, backup/restore, Docker, documentation, and
+      manual browser release checks. See `docs/RELEASE.md` for the dated local
+      baseline and the remaining target-device gate.
+- [x] Release notes and reproducible release checklist.
