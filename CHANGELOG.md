@@ -31,6 +31,11 @@ All notable changes to this project are documented in this file.
 - UI-012 adds active-page navigation semantics plus bounded browser access to
   privacy-minimised export and notification audit history.
 
+### Changed
+
+- Completed the reproducible Docker and manual browser release checks; the
+  Raspberry Pi target-device performance measurement remains an explicit gate.
+
 - Milestone 1 application foundation with FastAPI, SQLite, YAML settings,
   structured logging, health checks, Docker support, and quality tooling.
 - Milestone 2 provider-neutral job, provider, saved-search, and provider-run

@@ -81,9 +81,10 @@
 
 - [ ] Profile memory and latency on target-class hardware (benchmark harness
       and non-target baseline are available; Raspberry Pi evidence is pending).
-- [ ] Complete accessibility, security, documentation, backup/restore, and
+- [x] Complete accessibility, security, documentation, backup/restore, and
       deployment checks (automated restore and accessibility checks are in
-      place; the Docker daemon and manual accessibility audit remain pending).
+      place; Docker and the manual browser accessibility audit completed on
+      2026-07-23; target-device evidence remains separately pending).
 - [x] Prepare release notes and a reproducible release checklist.
 
 ## UI Review Backlog — 2026-07-23
