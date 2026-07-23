@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- PROV-003 adds a bootstrap-enabled Careers24 adapter for bounded public search
+  pages. It is stateless and direct: no account, cookie, browser, proxy,
+  CAPTCHA handling, detail-page crawl, or undocumented API. Source blocks are
+  recorded as safe provider failures rather than treated as empty results.
+
 - PROV-002 bootstraps missing discovered JobSpy and Pnet provider rows after
   migrations while preserving existing provider state. The provider API and UI
   now expose a safe, transient local availability category without persisting
@@ -45,6 +50,13 @@ All notable changes to this project are documented in this file.
   privacy-minimised export and notification audit history.
 
 ### Changed
+
+- JobSpy now runs Indeed and LinkedIn independently, preserving successful
+  source results when another site fails. Glassdoor is no longer supported or
+  installed as a JobSpy source.
+
+- Pnet now recognises the portal's current `data-testid="job-item"` result
+  cards while retaining the existing legacy markup fallbacks.
 
 - Completed the reproducible Docker and manual browser release checks; the
   Raspberry Pi target-device performance measurement remains an explicit gate.

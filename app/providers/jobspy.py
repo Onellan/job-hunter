@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Iterable, Mapping
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
@@ -22,9 +23,11 @@ from app.providers.errors import (
 
 _DEFAULT_RESULT_LIMIT = 25
 _MAX_RESULT_LIMIT = 100
-DEFAULT_SITES = ("indeed", "linkedin", "glassdoor")
+DEFAULT_SITES = ("indeed", "linkedin")
 _SUPPORTED_SITES = frozenset(DEFAULT_SITES)
 _DEFAULT_COUNTRY_INDEED = "South Africa"
+
+logger = logging.getLogger(__name__)
 
 
 class JobSpyProvider(BaseProvider):
@@ -67,14 +70,22 @@ class JobSpyProvider(BaseProvider):
         """Retrieve and normalise a bounded JobSpy result set."""
 
         scraper = self._scrape_jobs or _load_jobspy_scraper()
-        try:
-            dataframe = scraper(**_build_jobspy_arguments(criteria, configuration))
-            rows = dataframe.to_dict(orient="records")
-        except ProviderConfigurationError:
-            raise
-        except Exception as exception:
-            raise ProviderExecutionError() from exception
-        return _normalise_rows(rows)
+        arguments = _build_jobspy_arguments(criteria, configuration)
+        candidates: list[JobCandidate] = []
+        site_errors: list[ProviderExecutionError | ProviderParsingError] = []
+        for site in arguments["site_name"]:
+            try:
+                dataframe = scraper(**{**arguments, "site_name": [site]})
+                candidates.extend(_normalise_rows(dataframe.to_dict(orient="records")))
+            except ProviderConfigurationError:
+                raise
+            except Exception as exception:
+                error = _provider_error_from(exception)
+                site_errors.append(error)
+                _log_site_failure(site, error)
+        if candidates or len(site_errors) < len(arguments["site_name"]):
+            return candidates
+        raise site_errors[0]
 
 
 def _load_jobspy_scraper() -> Callable[..., Any]:
@@ -127,6 +138,23 @@ def _build_jobspy_arguments(
     if isinstance(country, str) and country:
         arguments["country_indeed"] = country
     return {name: value for name, value in arguments.items() if value is not None}
+
+
+def _provider_error_from(exception: Exception) -> ProviderExecutionError | ProviderParsingError:
+    """Return a safe provider error for one failed JobSpy source."""
+
+    if isinstance(exception, ProviderParsingError):
+        return exception
+    return ProviderExecutionError()
+
+
+def _log_site_failure(site: str, error: ProviderExecutionError | ProviderParsingError) -> None:
+    """Record a safe per-site outcome without logging portal content or exception text."""
+
+    logger.warning(
+        "jobspy_site_failed",
+        extra={"provider_code": JobSpyProvider.code, "site": site, "category": error.category},
+    )
 
 
 def _first_location(criteria: SearchCriteria, configuration: Mapping[str, JsonValue]) -> str | None:

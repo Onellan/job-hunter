@@ -30,7 +30,9 @@ _DEFAULT_TIMEOUT_MS = 30_000
 _DEFAULT_RATE_LIMIT_DELAY_MS = 1_500
 _DEFAULT_RETRY_ATTEMPTS = 1
 _MAX_RETRY_ATTEMPTS = 2
-_LISTING_SELECTOR = "article[data-testid='job-card'], article.job-card, article.job-item"
+_LISTING_SELECTOR = (
+    "[data-testid='job-item'], article[data-testid='job-card'], article.job-card, article.job-item"
+)
 _TITLE_SELECTOR = "[data-testid='job-title'] a, h2 a, h3 a, a.job-title"
 _COMPANY_SELECTOR = "[data-testid='company'], .company, .job-company"
 _LOCATION_SELECTOR = "[data-testid='location'], .location, .job-location"

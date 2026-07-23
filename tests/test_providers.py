@@ -17,7 +17,7 @@ from app.database.engine import create_database_engine
 from app.models.search import SearchCriteria
 from app.providers.errors import ProviderConfigurationError
 from app.providers.execution import BoundedProviderExecutor
-from app.providers.jobspy import DEFAULT_SITES, JobSpyProvider, _build_jobspy_arguments
+from app.providers.jobspy import JobSpyProvider, _build_jobspy_arguments
 from app.providers.pnet import PnetProvider, PnetSettings, check_pnet_runtime
 from app.providers.registry import ProviderRegistry
 
@@ -72,6 +72,24 @@ def test_pnet_provider_parses_recorded_pages_with_bounded_pagination() -> None:
     assert str(candidates[0].source_url) == "https://www.pnet.co.za/jobs/data-engineer-1001"
     assert candidates[0].workplace_type == "remote"
     assert candidates[1].employment_type == "contract"
+
+
+def test_pnet_provider_parses_current_job_item_markup() -> None:
+    """Current Pnet job-item cards do not require the legacy article markup."""
+
+    fixture_html = (Path("tests/fixtures/pnet_current_results.html")).read_text(encoding="utf-8")
+
+    candidates = list(
+        PnetProvider(lambda _urls, _settings: [fixture_html]).search(
+            SearchCriteria(keywords=["project", "manager"]),
+            {"max_pages": 1},
+        )
+    )
+
+    assert len(candidates) == 1
+    assert candidates[0].source_job_id == "pnet-current-1003"
+    assert candidates[0].title == "Project Manager"
+    assert str(candidates[0].source_url) == "https://www.pnet.co.za/jobs/project-manager-1003"
 
 
 def test_pnet_provider_rejects_unbounded_or_non_pnet_configuration() -> None:
@@ -164,12 +182,46 @@ def test_jobspy_provider_normalises_a_fixture_without_live_network_access() -> N
     assert candidates[0].salary_period == "year"
 
 
+def test_jobspy_preserves_successful_sites_when_one_site_raises() -> None:
+    """A broken configured source cannot discard another JobSpy source's results."""
+
+    calls: list[str] = []
+
+    def scrape_jobs(**arguments: object) -> _FakeDataFrame:
+        sites = arguments["site_name"]
+        assert isinstance(sites, list)
+        site = sites[0]
+        assert isinstance(site, str)
+        calls.append(site)
+        if site == "linkedin":
+            raise RuntimeError("upstream source rejected the request")
+        return _FakeDataFrame(
+            [
+                {
+                    "id": "jobspy-indeed-1",
+                    "job_url": "https://jobs.example.test/jobspy-indeed-1",
+                    "title": "Project Manager",
+                }
+            ]
+        )
+
+    candidates = list(
+        JobSpyProvider(scrape_jobs).search(
+            SearchCriteria(keywords=["project", "manager"]),
+            {"sites": ["indeed", "linkedin"], "results_wanted": 5},
+        )
+    )
+
+    assert calls == ["indeed", "linkedin"]
+    assert [candidate.source_job_id for candidate in candidates] == ["jobspy-indeed-1"]
+
+
 def test_jobspy_uses_the_supported_default_sites_and_south_africa_country() -> None:
-    """The selected JobSpy release receives only the verified provider defaults."""
+    """Fresh defaults use the supported South African JobSpy sites."""
 
     arguments = _build_jobspy_arguments(SearchCriteria(keywords=["engineer"]), {})
 
-    assert arguments["site_name"] == list(DEFAULT_SITES)
+    assert arguments["site_name"] == ["indeed", "linkedin"]
     assert arguments["country_indeed"] == "South Africa"
     assert arguments["results_wanted"] == 25
 
@@ -177,8 +229,8 @@ def test_jobspy_uses_the_supported_default_sites_and_south_africa_country() -> N
 def test_jobspy_rejects_sites_outside_the_supported_allow_list() -> None:
     """An unsupported portal name is rejected before the scraper can make a request."""
 
-    with pytest.raises(ProviderConfigurationError, match="google"):
-        _build_jobspy_arguments(SearchCriteria(keywords=["engineer"]), {"sites": ["google"]})
+    with pytest.raises(ProviderConfigurationError, match="glassdoor"):
+        _build_jobspy_arguments(SearchCriteria(keywords=["engineer"]), {"sites": ["glassdoor"]})
 
 
 def test_pnet_runtime_check_reports_a_missing_local_browser_without_launching(

@@ -34,8 +34,8 @@ in `.ai/UI_REVIEW.md`; they are intentionally removed from this active backlog.
 
 ## Built-in provider availability
 
-**Recommended execution order:** PROV-001, then PROV-002. These tasks cover
-only the two discovered built-in providers: JobSpy and Pnet.
+**Recommended execution order:** PROV-001, then PROV-002, then PROV-003. These
+tasks cover the discovered built-in providers: JobSpy, Pnet, and Careers24.
 
 ### PROV-001 — Install the built-in provider runtime in normal deployments
 
@@ -65,8 +65,9 @@ the normal runtime installation: JobSpy, Playwright, BeautifulSoup, lxml, and
 the existing Excel-export dependency. Pin or otherwise select one compatible
 `python-jobspy` release within the current supported range, then derive and
 validate the JobSpy `sites` allow-list from that installed release. The default
-must use only verified names and be `indeed`, `linkedin`, and `glassdoor` with
-`country_indeed: South Africa` and `results_wanted: 25`.
+uses only `indeed` and `linkedin` with `country_indeed: South Africa` and
+`results_wanted: 25`; Glassdoor is not a supported JobSpy source in
+Job-Hunter.
 
 Build Chromium and its Linux dependencies into the Docker image before dropping
 privileges, with an architecture-neutral Playwright install that supports
@@ -84,7 +85,7 @@ provider-install command.
 - [x] `python -m pip install -e ".[dev]"` installs every built-in Python
       dependency; startup safely reports a locally missing Pnet browser rather
       than failing the application.
-- [x] The chosen JobSpy release accepts the three default portal names and
+- [x] The chosen JobSpy release accepts the supported default portal names and
       rejects unsupported names before a provider run is queued.
 - [x] No live portal request, credential, cookie, CAPTCHA bypass, or browser
       download occurs during installation or startup.
@@ -178,3 +179,20 @@ mypy app
 python -m alembic upgrade head
 docker compose up --build
 ```
+
+### PROV-003 — Bounded direct Careers24 public-search provider
+
+- **Status:** Complete
+- **Priority:** High
+- **Depends on:** PROV-002
+- **Evidence:** Careers24 is discovered and bootstrapped using provider-owned
+  defaults. It requests only public HTTPS result pages with no account,
+  cookies, profile, proxy, CAPTCHA handling, browser automation, detail-page
+  crawl, or undocumented API. The adapter caps work at one default/two maximum
+  pages and 20 default/50 maximum results, and classifies a visible source
+  block as a provider failure. Deterministic fixture tests cover URL building,
+  card normalisation, bounded retry, block handling, and automatic API/UI row
+  creation without portal traffic.
+- **Files:** `app/providers/careers24.py`,
+  `tests/test_careers24_provider.py`, `tests/fixtures/careers24_results.html`,
+  `docs/PROVIDERS.md`, `CHANGELOG.md`.

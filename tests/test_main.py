@@ -85,7 +85,7 @@ def test_startup_bootstraps_defaults_without_replacing_user_provider_state(
         pnet = providers_by_code["pnet"]
         assert set(providers_by_code) == {"jobspy", "pnet"}
         assert jobspy["configuration"] == {
-            "sites": ["indeed", "linkedin", "glassdoor"],
+            "sites": ["indeed", "linkedin"],
             "country_indeed": "South Africa",
             "results_wanted": 25,
         }
