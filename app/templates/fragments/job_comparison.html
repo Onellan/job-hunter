@@ -1,0 +1,11 @@
+{% if comparison %}
+  <h2>Comparison</h2>
+  <p><strong>Skills shared by all selected jobs:</strong> {{ comparison.common_resume_skills | join(', ') or 'None' }}</p>
+  {% for item in comparison.jobs %}
+    <article>
+      <header><strong>{{ item.job.title }}</strong></header>
+      <p><strong>Matched:</strong> {{ item.matched_resume_skills | join(', ') or 'None' }}</p>
+      <p><strong>Not matched:</strong> {{ item.missing_resume_skills | join(', ') or 'None' }}</p>
+    </article>
+  {% endfor %}
+{% endif %}

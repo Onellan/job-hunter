@@ -60,7 +60,11 @@ def validate_provider_run_transition(
     """Raise when a provider run is asked to take an invalid next step."""
 
     allowed_transitions: dict[ProviderRunStatus, set[ProviderRunStatus]] = {
-        ProviderRunStatus.PENDING: {ProviderRunStatus.RUNNING, ProviderRunStatus.CANCELLED},
+        ProviderRunStatus.PENDING: {
+            ProviderRunStatus.RUNNING,
+            ProviderRunStatus.FAILED,
+            ProviderRunStatus.CANCELLED,
+        },
         ProviderRunStatus.RUNNING: {
             ProviderRunStatus.SUCCEEDED,
             ProviderRunStatus.FAILED,

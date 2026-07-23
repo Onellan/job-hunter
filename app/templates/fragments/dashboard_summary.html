@@ -1,0 +1,39 @@
+<section id="dashboard-summary" hx-get="/dashboard/summary" hx-trigger="every 30s" hx-swap="outerHTML">
+  <div class="metric-grid" aria-label="Dashboard metrics">
+    <article><small>Jobs found today</small><strong>{{ dashboard.jobs_found_today }}</strong></article>
+    <article><small>Last run</small><strong>{{ dashboard.last_run_at.strftime('%Y-%m-%d %H:%M UTC') if dashboard.last_run_at else 'No completed run' }}</strong></article>
+    <article><small>Providers</small><strong>{{ dashboard.enabled_provider_count }} / {{ dashboard.provider_count }} enabled</strong></article>
+    <article><small>Errors today</small><strong>{{ dashboard.error_count_today }}</strong></article>
+    <article><small>System status</small><strong class="status-ok">Operational</strong></article>
+  </div>
+
+  <div class="dashboard-grid">
+    <article>
+      <header><strong>Recent searches</strong></header>
+      {% if dashboard.recent_searches %}
+        <ul class="plain-list">
+          {% for search in dashboard.recent_searches %}
+            <li><strong>{{ search.name }}</strong><small>Updated {{ search.updated_at.strftime('%Y-%m-%d %H:%M UTC') }}</small></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No saved searches yet.</p>
+      {% endif %}
+    </article>
+    <article>
+      <header><strong>Latest jobs</strong><a href="/jobs">View all</a></header>
+      {% if dashboard.latest_jobs %}
+        <ul class="plain-list">
+          {% for item in dashboard.latest_jobs %}
+            <li>
+              <a href="/jobs/{{ item.job.id }}"><strong>{{ item.job.title }}</strong></a>
+              <small>{{ item.job.company or 'Company not listed' }} · {{ item.job.location or item.job.workplace_type.value }}</small>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No jobs have been collected yet.</p>
+      {% endif %}
+    </article>
+  </div>
+</section>

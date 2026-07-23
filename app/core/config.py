@@ -8,10 +8,11 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
 
 from app.core.errors import ConfigurationError
+from app.models.scoring import ScoringProfile
 
 
 class ApplicationSettings(BaseModel):
@@ -45,6 +46,57 @@ class LoggingSettings(BaseModel):
     json_logs: bool = True
 
 
+class ProviderExecutionSettings(BaseModel):
+    """Limits for local provider execution on resource-constrained deployments."""
+
+    max_concurrent_runs: int = Field(default=1, ge=1, le=2)
+    max_queued_runs: int = Field(default=4, ge=0, le=20)
+
+
+class SchedulerSettings(BaseModel):
+    """Small process-local limits for APScheduler dispatch work."""
+
+    enabled: bool = True
+    retry_delay_seconds: int = Field(default=60, ge=5, le=3_600)
+    max_registered_schedules: int = Field(default=100, ge=1, le=1_000)
+
+
+class ScoringSettings(ScoringProfile):
+    """Local deterministic scoring preferences loaded from configuration."""
+
+    enabled: bool = True
+
+
+class AuthenticationSettings(BaseModel):
+    """Local-only authentication settings; credentials are never configured here."""
+
+    enabled: bool = False
+    session_ttl_hours: int = Field(default=24, ge=1, le=168)
+    session_cookie_name: str = "job_hunter_session"
+    session_cookie_secure: bool = False
+    login_max_attempts: int = Field(default=5, ge=1, le=20)
+    login_window_seconds: int = Field(default=900, ge=60, le=3_600)
+
+
+class NotificationSettings(BaseModel):
+    """Opt-in notification configuration; recipients and secrets come from deployment config."""
+
+    enabled: bool = False
+    email_url: str | None = None
+    telegram_bot_token: str | None = None
+    telegram_chat_id: str | None = None
+    slack_webhook_url: str | None = None
+    teams_webhook_url: str | None = None
+
+
+class ResumeSettings(BaseModel):
+    """Limits and vocabulary for local-only deterministic resume matching."""
+
+    enabled: bool = True
+    max_upload_characters: int = Field(default=200_000, ge=1_000, le=500_000)
+    skill_vocabulary: list[str] = Field(default_factory=list, max_length=100)
+
+
 class SecuritySettings(BaseModel):
     """Baseline HTTP security settings."""
 
@@ -68,7 +120,29 @@ class Settings(BaseSettings):
     server: ServerSettings = Field(default_factory=ServerSettings)
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
+    provider_execution: ProviderExecutionSettings = Field(default_factory=ProviderExecutionSettings)
+    scheduler: SchedulerSettings = Field(default_factory=SchedulerSettings)
+    scoring: ScoringSettings = Field(default_factory=ScoringSettings)
+    authentication: AuthenticationSettings = Field(default_factory=AuthenticationSettings)
+    notifications: NotificationSettings = Field(default_factory=NotificationSettings)
+    resume: ResumeSettings = Field(default_factory=ResumeSettings)
     security: SecuritySettings = Field(default_factory=SecuritySettings)
+
+    @model_validator(mode="after")
+    def require_secure_production_session(self) -> Settings:
+        """Reject production settings that leave browser access or host checks unsafe."""
+
+        if (
+            self.app.environment == "production"
+            and self.authentication.enabled
+            and not self.authentication.session_cookie_secure
+        ):
+            raise ValueError("authentication.session_cookie_secure must be true in production")
+        if self.app.environment == "production" and any(
+            host in {"localhost", "127.0.0.1", "*"} for host in self.security.trusted_hosts
+        ):
+            raise ValueError("security.trusted_hosts must contain explicit production hostnames")
+        return self
 
     @classmethod
     def settings_customise_sources(

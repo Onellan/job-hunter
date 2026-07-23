@@ -29,57 +29,59 @@
 - [x] Document the data model, API contracts, migration operations, and current
       retention/privacy choices.
 
-## Milestone 3 — Provider Platform
+## Milestone 3 — Provider Platform ✅
 
-- [ ] Add `BaseProvider`, provider registry/discovery, enablement configuration,
+- [x] Add `BaseProvider`, provider registry/discovery, enablement configuration,
       bounded local execution, and isolated provider-run outcomes.
-- [ ] Add the JobSpy adapter behind the standard contract.
-- [ ] Add manual search execution and deterministic fake-provider tests.
+- [x] Add the JobSpy adapter behind the standard contract.
+- [x] Add manual search execution and deterministic fake-provider tests.
 
-## Milestone 4 — Search Workspace
+## Milestone 4 — Search Workspace ✅
 
-- [ ] Build dashboard metrics, provider/error status, and recent searches.
-- [ ] Build server-rendered search, filter, result, pagination, and job-detail
+- [x] Build dashboard metrics, provider/error status, and recent searches.
+- [x] Build server-rendered search, filter, result, pagination, and job-detail
       pages with focused HTMX updates.
-- [ ] Add bookmarks, applied state, notes, bulk actions, and accessible fallbacks.
+- [x] Add bookmarks, applied state, notes, bulk actions, and accessible fallbacks.
 
-## Milestone 5 — Export
+## Milestone 5 — Export ✅
 
-- [ ] Stream CSV and JSON exports.
-- [ ] Add constant-memory XLSX export and SQLite backup export.
-- [ ] Support selected-job export, audit events, API endpoints, and UI controls.
+- [x] Stream CSV and JSON exports.
+- [x] Add constant-memory XLSX export and SQLite backup export.
+- [x] Support selected-job export, audit events, API endpoints, and UI controls.
 
-## Milestone 6 — Scheduler
+## Milestone 6 — Scheduler ✅
 
-- [ ] Add APScheduler daily and cron schedules, persisted run history, manual
+- [x] Add APScheduler daily and cron schedules, persisted run history, manual
       runs, bounded retries, and incremental-search behaviour.
 
-## Milestone 7 — Direct Providers
+## Milestone 7 — Direct Providers ✅
 
-- [ ] Add the Pnet Playwright adapter with explicit browser lifecycle,
+- [x] Add the Pnet Playwright adapter with explicit browser lifecycle,
       pagination, parser fixtures, rate limits, retry classification, and
       low-concurrency safeguards.
 
-## Milestone 8 — Explainable Scoring
+## Milestone 8 — Explainable Scoring ✅
 
-- [ ] Add deterministic role, skill, salary, remote, leadership, experience,
+- [x] Add deterministic role, skill, salary, remote, leadership, experience,
       project-management, business-analysis, and Agile scoring.
-- [ ] Show reasons, matches, gaps, and confidence; make external AI opt-in.
+- [x] Show reasons, matches, gaps, and confidence; make external AI opt-in.
 
 ## Milestone 9 — Authentication and Notifications
 
-- [ ] Add password hashing, sessions, CSRF, authorization, secure defaults, and
+- [x] Add password hashing, sessions, CSRF, authorization, secure defaults, and
       rate limits before exposing state-changing browser workflows.
-- [ ] Add opt-in notification adapters (email, Telegram, Teams, Slack) with
+- [x] Add opt-in notification adapters (email, Telegram, Teams, Slack) with
       safe configuration and delivery history.
 
 ## Milestone 10 — Advanced Matching
 
-- [ ] Add consented resume upload, skill extraction, and job comparison.
+- [x] Add consented resume upload, skill extraction, and job comparison.
 
 ## Milestone 11 — Release Quality
 
-- [ ] Profile memory and latency on target-class hardware.
+- [ ] Profile memory and latency on target-class hardware (benchmark harness
+      and non-target baseline are available; Raspberry Pi evidence is pending).
 - [ ] Complete accessibility, security, documentation, backup/restore, and
-      deployment checks.
-- [ ] Prepare release notes and a reproducible release checklist.
+      deployment checks (automated restore and accessibility checks are in
+      place; the Docker daemon and manual accessibility audit remain pending).
+- [x] Prepare release notes and a reproducible release checklist.

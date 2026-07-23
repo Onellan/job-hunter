@@ -1,0 +1,7 @@
+{% if profile %}
+  <header><strong>Derived skill profile</strong></header>
+  <p>Consented {{ profile.consented_at.strftime('%Y-%m-%d %H:%M UTC') }}.</p>
+  {% if profile.skills %}<p>{{ profile.skills | join(', ') }}</p>{% else %}<p>No configured or known skills were found.</p>{% endif %}
+{% else %}
+  <p>No consented resume profile has been saved.</p>
+{% endif %}

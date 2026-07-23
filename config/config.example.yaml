@@ -18,6 +18,50 @@ logging:
   level: INFO
   json_logs: true
 
+provider_execution:
+  # Keep one run on a 1 GB Raspberry Pi unless measurements justify more.
+  max_concurrent_runs: 1
+  max_queued_runs: 4
+
+scheduler:
+  enabled: true
+  retry_delay_seconds: 60
+  max_registered_schedules: 100
+
+scoring:
+  enabled: true
+  target_roles:
+    - data engineer
+  skills:
+    - python
+    - sql
+  remote_preference: hybrid
+  leadership: false
+  project_management: false
+  business_analysis: false
+  agile: true
+
+authentication:
+  enabled: true
+  session_ttl_hours: 24
+  session_cookie_name: job_hunter_session
+  session_cookie_secure: true
+  login_max_attempts: 5
+  login_window_seconds: 900
+
+# Keep recipients and secrets in deployment-only configuration or JOB_HUNTER_
+# environment variables. No channel is active until enabled is true.
+notifications:
+  enabled: false
+
+resume:
+  enabled: true
+  max_upload_characters: 200000
+  # Add only terms you want the deterministic extractor to recognise.
+  skill_vocabulary:
+    - Python
+    - SQL
+
 security:
   # Add the public hostname used by the reverse proxy.
   trusted_hosts:

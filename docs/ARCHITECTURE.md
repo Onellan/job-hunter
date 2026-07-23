@@ -29,19 +29,19 @@ the same services and validation contracts instead of making inefficient HTTP
 calls back into the same process. A mobile client can therefore use the JSON
 API without a backend redesign.
 
-## Milestone 1 layout
+## Project layout
 
 ```text
 app/
 ├── api/          JSON API adapters
 ├── core/         settings, logging, middleware, errors
-├── database/     engine and future repositories
+├── database/     engine, migrations, tables, and repositories
 ├── exporters/    future export adapters
-├── models/       future provider-neutral models
-├── providers/    future provider plugins
+├── models/       provider-neutral contracts and state rules
+├── providers/    plugin contract, discovery, adapters, and bounded execution
 ├── routers/      HTML and HTMX adapters
 ├── scheduler/    future APScheduler integration
-├── services/     future application workflows
+├── services/     application workflows and persistence ports
 ├── static/       small CSS, JavaScript, and icon assets
 ├── templates/    Jinja2 templates
 └── main.py       application factory
@@ -69,3 +69,42 @@ enforces the same identity constraints, preserving idempotency across restarts.
 Schema changes use Alembic migrations; the application never calls
 `create_all()` at runtime. See [the data model](DATA_MODEL.md) and
 [migration guide](MIGRATIONS.md) for operational detail.
+
+## Provider execution
+
+Milestone 3 adds a `BaseProvider` plugin contract. Providers receive only a
+saved search's neutral criteria and provider configuration, then yield
+`JobCandidate` values. They do not import database, web, scheduler, or export
+code. Built-in provider modules are discovered automatically; external
+packages can register a provider class under the `job_hunter.providers` entry
+point group.
+
+`ManualSearchService` creates durable provider-run records before handing only
+their IDs to `BoundedProviderExecutor`. The executor owns a fixed thread pool
+and finite semaphore-backed queue, creates a database session within each
+worker, upserts candidates through `JobService`, and persists an isolated safe
+outcome. This lets API requests return immediately and keeps a failed provider
+from affecting other runs.
+
+## Search workspace
+
+Milestone 4 keeps browser rendering in `app/routers` and application behaviour
+in `JobWorkspaceService` and `DashboardService`. `SqliteJobWorkspaceRepository`
+uses an outer join to the small optional workflow table, so filters, sorting,
+pagination, and workflow state require no per-row follow-up queries. The
+dashboard read model fetches fixed-size latest-job and recent-search lists.
+
+HTML routes return complete usable pages. Their `/results`, `/summary`, and
+`/workflow-panel` counterparts return focused HTMX fragments. Browser forms
+remain functional without HTMX through ordinary `303` redirects; HTMX state
+changes issue a lightweight trigger that refreshes only dependent sections.
+
+## Exports
+
+Milestone 5 keeps `ExportService` independent of FastAPI and concrete formats.
+Its engine-scoped export repository opens a fresh session inside each iterator,
+so CSV and JSON streams stay valid after the originating request session ends.
+It reads at most 100 records into memory per database batch. XLSX and SQLite
+backup adapters use temporary files because their container formats cannot be
+sent before finalisation; XLSX is configured for constant-memory writing and
+both files are removed when their response stream ends.

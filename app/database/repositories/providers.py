@@ -83,6 +83,15 @@ class SqliteProviderRepository:
             limit=limit,
         )
 
+    def list_enabled(self, codes: set[str] | None) -> list[ProviderRecord]:
+        """Return enabled provider registrations for manual execution selection."""
+
+        statement = select(ProviderTable).where(ProviderTable.enabled.is_(True))
+        if codes:
+            statement = statement.where(ProviderTable.code.in_(codes))
+        tables = self._session.exec(statement.order_by(ProviderTable.code)).all()
+        return [to_provider_record(table) for table in tables]
+
     def delete(self, provider_id: UUID) -> bool:
         """Delete a provider registration when no execution history references it."""
 

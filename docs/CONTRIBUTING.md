@@ -39,5 +39,5 @@ the compatibility decision, and keep the full suite warning-free.
   a changelog entry with every milestone change.
 - Prefer the smallest dependency and simplest design that meets the requirement.
 
-Provider authoring and database migration guides will be added with the
-corresponding provider and persistence milestones.
+Read the [provider guide](PROVIDERS.md), [workspace guide](WORKSPACE.md), and
+[database migration guide](MIGRATIONS.md) before changing those boundaries.

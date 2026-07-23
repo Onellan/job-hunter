@@ -1,0 +1,66 @@
+<section id="job-results" hx-get="/jobs/results?{{ refresh_query }}" hx-trigger="jobs-updated from:body" hx-swap="outerHTML" aria-live="polite">
+  <div class="results-heading">
+    <p><strong>{{ page.total }}</strong> matching job{{ '' if page.total == 1 else 's' }}</p>
+  </div>
+  {% if page.items %}
+    <form id="job-selection" method="post" action="/jobs/actions">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="return_to" value="/jobs?{{ refresh_query }}">
+      {% if query.text %}<input type="hidden" name="text" value="{{ query.text }}">{% endif %}
+      {% if query.source %}<input type="hidden" name="source" value="{{ query.source }}">{% endif %}
+      {% if query.workplace_type %}<input type="hidden" name="workplace_type" value="{{ query.workplace_type.value }}">{% endif %}
+      {% if query.bookmarked is not none %}<input type="hidden" name="bookmarked" value="{{ query.bookmarked | lower }}">{% endif %}
+      {% if query.applied is not none %}<input type="hidden" name="applied" value="{{ query.applied | lower }}">{% endif %}
+      <input type="hidden" name="sort" value="{{ query.sort.value }}">
+      <div class="bulk-actions" role="group" aria-label="Bulk actions">
+        <button type="submit" name="action" value="bookmark" hx-post="/jobs/actions" hx-include="#job-selection" hx-swap="none">Bookmark selected</button>
+        <button type="submit" name="action" value="remove_bookmark" class="secondary" hx-post="/jobs/actions" hx-include="#job-selection" hx-swap="none">Remove bookmark</button>
+        <button type="submit" name="action" value="mark_applied" hx-post="/jobs/actions" hx-include="#job-selection" hx-swap="none">Mark applied</button>
+        <button type="submit" name="action" value="clear_applied" class="secondary" hx-post="/jobs/actions" hx-include="#job-selection" hx-swap="none">Clear applied</button>
+        <label class="export-format">Export
+          <select name="format" aria-label="Export format">
+            <option value="csv">CSV</option>
+            <option value="json">JSON</option>
+            <option value="xlsx">Excel</option>
+          </select>
+        </label>
+        <button type="submit" formaction="/exports/jobs" formmethod="get">Export selected / filtered</button>
+        <a href="/exports/sqlite" class="secondary" role="button">SQLite backup</a>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col">Select</th><th scope="col">Role</th><th scope="col">Workplace</th><th scope="col">Source</th><th scope="col">Status</th></tr>
+          </thead>
+          <tbody>
+            {% for item in page.items %}
+              <tr>
+                <td><input type="checkbox" name="job_ids" value="{{ item.job.id }}" aria-label="Select {{ item.job.title }}"></td>
+                <td>
+                  <a href="/jobs/{{ item.job.id }}"><strong>{{ item.job.title }}</strong></a><br>
+                  <small>{{ item.job.company or 'Company not listed' }} · {{ item.job.location or 'Location not listed' }}</small>
+                </td>
+                <td>{{ item.job.workplace_type.value.replace('_', ' ').title() }}</td>
+                <td>{{ item.job.source }}</td>
+                <td>
+                  {% if item.workflow.is_bookmarked %}<span class="badge">Bookmarked</span>{% endif %}
+                  {% if item.workflow.is_applied %}<span class="badge success">Applied</span>{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+  {% else %}
+    <article><p>No jobs match these filters. Try clearing a filter or run a saved search.</p></article>
+  {% endif %}
+
+  {% if page.total > page.limit %}
+    <nav class="pagination" aria-label="Job results pages">
+      {% if page.offset > 0 %}<a href="/jobs?{{ previous_query }}" hx-get="/jobs/results?{{ previous_query }}" hx-target="#job-results" hx-push-url="true">Previous</a>{% endif %}
+      <span>Showing {{ page.offset + 1 }}–{{ [page.offset + page.limit, page.total] | min }} of {{ page.total }}</span>
+      {% if page.offset + page.limit < page.total %}<a href="/jobs?{{ next_query }}" hx-get="/jobs/results?{{ next_query }}" hx-target="#job-results" hx-push-url="true">Next</a>{% endif %}
+    </nav>
+  {% endif %}
+</section>

@@ -19,6 +19,41 @@ logging:
   level: INFO
   json_logs: true
 
+provider_execution:
+  max_concurrent_runs: 1
+  max_queued_runs: 4
+
+scheduler:
+  enabled: true
+  retry_delay_seconds: 60
+  max_registered_schedules: 100
+
+scoring:
+  enabled: true
+  target_roles: []
+  skills: []
+  remote_preference: any
+  leadership: false
+  project_management: false
+  business_analysis: false
+  agile: false
+
+authentication:
+  enabled: false
+  session_ttl_hours: 24
+  session_cookie_name: job_hunter_session
+  session_cookie_secure: false
+  login_max_attempts: 5
+  login_window_seconds: 900
+
+notifications:
+  enabled: false
+
+resume:
+  enabled: true
+  max_upload_characters: 200000
+  skill_vocabulary: []
+
 security:
   trusted_hosts:
     - localhost

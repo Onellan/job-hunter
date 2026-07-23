@@ -1,0 +1,21 @@
+# Default Codex model for this repository.
+model = "gpt-5.6-terra"
+
+# Use medium reasoning for normal development work.
+model_reasoning_effort = "medium"
+
+# Keep responses useful without excessive explanation.
+model_verbosity = "medium"
+
+# Automatically use more reasoning whenever Codex Plan mode is active.
+plan_mode_reasoning_effort = "high"
+
+[agents]
+enabled = true
+
+# Subagents default to the same balanced configuration.
+default_subagent_model = "gpt-5.6-terra"
+default_subagent_reasoning_effort = "medium"
+
+# Suitable for a development workstation without creating excessive agents.
+max_concurrent_threads_per_session = 4

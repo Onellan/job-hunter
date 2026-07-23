@@ -25,5 +25,13 @@ class ResourceConflictError(ValueError):
     """Raised when an operation conflicts with durable application state."""
 
 
+class ResourceValidationError(ValueError):
+    """Raised when a requested operation is valid syntactically but unavailable."""
+
+
+class NoEnabledProviderError(ResourceConflictError):
+    """Raised when a saved search has no enabled configured provider to run."""
+
+
 class ProviderRunTransitionError(ResourceConflictError):
     """Raised when a provider run is moved through an invalid state transition."""

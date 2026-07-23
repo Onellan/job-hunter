@@ -7,7 +7,8 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from app.models.errors import EntityNotFoundError, ResourceConflictError
+from app.models.errors import EntityNotFoundError, ResourceConflictError, ResourceValidationError
+from app.models.export_errors import ExportUnavailableError
 
 
 async def entity_not_found_handler(_: Request, exception: Exception) -> JSONResponse:
@@ -24,6 +25,15 @@ async def resource_conflict_handler(_: Request, exception: Exception) -> JSONRes
     return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(exception)})
 
 
+async def resource_validation_handler(_: Request, exception: Exception) -> JSONResponse:
+    """Translate unavailable configured operations into safe request errors."""
+
+    assert isinstance(exception, ResourceValidationError)
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content={"detail": str(exception)}
+    )
+
+
 async def model_validation_handler(_: Request, exception: Exception) -> JSONResponse:
     """Return service-level model validation failures as unprocessable input."""
 
@@ -34,9 +44,20 @@ async def model_validation_handler(_: Request, exception: Exception) -> JSONResp
     )
 
 
+async def export_unavailable_handler(_: Request, exception: Exception) -> JSONResponse:
+    """Translate optional export dependency failures into a safe service response."""
+
+    assert isinstance(exception, ExportUnavailableError)
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE, content={"detail": str(exception)}
+    )
+
+
 def register_exception_handlers(application: FastAPI) -> None:
     """Register application error mappings once at the composition root."""
 
     application.add_exception_handler(EntityNotFoundError, entity_not_found_handler)
     application.add_exception_handler(ResourceConflictError, resource_conflict_handler)
+    application.add_exception_handler(ResourceValidationError, resource_validation_handler)
     application.add_exception_handler(ValidationError, model_validation_handler)
+    application.add_exception_handler(ExportUnavailableError, export_unavailable_handler)

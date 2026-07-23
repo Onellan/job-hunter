@@ -1,0 +1,26 @@
+<aside id="workflow-panel" hx-get="/jobs/{{ item.job.id }}/workflow-panel" hx-trigger="jobs-updated from:body" hx-swap="outerHTML">
+  <article>
+    <header><strong>My workflow</strong></header>
+    <div class="workflow-buttons">
+      <form method="post" action="/jobs/{{ item.job.id }}/workflow" hx-post="/jobs/{{ item.job.id }}/workflow" hx-swap="none">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="is_bookmarked" value="{{ 'false' if item.workflow.is_bookmarked else 'true' }}">
+        <input type="hidden" name="return_to" value="/jobs/{{ item.job.id }}">
+        <button type="submit" class="secondary">{{ 'Remove bookmark' if item.workflow.is_bookmarked else 'Bookmark' }}</button>
+      </form>
+      <form method="post" action="/jobs/{{ item.job.id }}/workflow" hx-post="/jobs/{{ item.job.id }}/workflow" hx-swap="none">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="is_applied" value="{{ 'false' if item.workflow.is_applied else 'true' }}">
+        <input type="hidden" name="return_to" value="/jobs/{{ item.job.id }}">
+        <button type="submit">{{ 'Clear applied' if item.workflow.is_applied else 'Mark applied' }}</button>
+      </form>
+    </div>
+    <form method="post" action="/jobs/{{ item.job.id }}/workflow" hx-post="/jobs/{{ item.job.id }}/workflow" hx-swap="none">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="6" maxlength="10000" placeholder="Add a private application note…">{{ item.workflow.notes or '' }}</textarea>
+      <input type="hidden" name="return_to" value="/jobs/{{ item.job.id }}">
+      <button type="submit">Save note</button>
+    </form>
+  </article>
+</aside>

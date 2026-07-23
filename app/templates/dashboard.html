@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · {{ application_name }}{% endblock %}
+
+{% block content %}
+  <section class="page-heading">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Current search activity and the newest opportunities.</p>
+    </div>
+    <a href="/jobs" role="button"><i data-lucide="search" aria-hidden="true"></i> Browse jobs</a>
+  </section>
+
+  {% include "fragments/dashboard_summary.html" %}
+{% endblock %}

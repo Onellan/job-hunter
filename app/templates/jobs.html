@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs · {{ application_name }}{% endblock %}
+
+{% block content %}
+  <section class="page-heading">
+    <div>
+      <h1>Jobs</h1>
+      <p>Filter, review, and track your collected opportunities.</p>
+    </div>
+  </section>
+
+  <form id="job-filters" class="filter-panel" method="get" action="/jobs" hx-get="/jobs/results" hx-target="#job-results" hx-push-url="true" hx-trigger="change, keyup changed delay:350ms from:input[type='search']">
+    <label>
+      Search jobs
+      <input type="search" name="text" value="{{ query.text or '' }}" placeholder="Title, company, or location">
+    </label>
+    <label>
+      Source
+      <input type="text" name="source" value="{{ query.source or '' }}" maxlength="64" placeholder="Any source">
+    </label>
+    <label>
+      Workplace
+      <select name="workplace_type">
+        <option value="">Any workplace</option>
+        {% for workplace in ['remote', 'hybrid', 'on_site', 'unknown'] %}
+          <option value="{{ workplace }}" {% if query.workplace_type and query.workplace_type.value == workplace %}selected{% endif %}>{{ workplace.replace('_', ' ').title() }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Sort
+      <select name="sort">
+        {% for sort_value, label in [('recent', 'Recently seen'), ('published', 'Recently published'), ('title', 'Title'), ('company', 'Company')] %}
+          <option value="{{ sort_value }}" {% if query.sort.value == sort_value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <fieldset class="filter-checks">
+      <label><input type="checkbox" name="bookmarked" value="true" {% if query.bookmarked %}checked{% endif %}> Bookmarked</label>
+      <label><input type="checkbox" name="applied" value="true" {% if query.applied %}checked{% endif %}> Applied</label>
+    </fieldset>
+    <input type="hidden" name="limit" value="{{ query.limit }}">
+    <button type="submit"><i data-lucide="filter" aria-hidden="true"></i> Apply filters</button>
+  </form>
+
+  {% include "fragments/job_results.html" %}
+{% endblock %}

@@ -7,9 +7,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Response, status
 
-from app.api.dependencies import get_search_service
+from app.api.dependencies import get_manual_search_service, get_search_service
 from app.models.common import PaginatedResult
 from app.models.search import SearchCreate, SearchRecord, SearchUpdate
+from app.models.search_execution import ManualSearchStartResult
+from app.services.manual_searches import ManualSearchService
 from app.services.searches import SearchService
 
 router = APIRouter(prefix="/searches", tags=["searches"])
@@ -55,6 +57,18 @@ def update_search(
     """Update mutable saved-search fields."""
 
     return service.update(search_id, changes)
+
+
+@router.post(
+    "/{search_id}/run", response_model=ManualSearchStartResult, status_code=status.HTTP_202_ACCEPTED
+)
+def start_manual_search(
+    search_id: UUID,
+    service: Annotated[ManualSearchService, Depends(get_manual_search_service)],
+) -> ManualSearchStartResult:
+    """Create provider runs and queue bounded background execution without waiting for scraping."""
+
+    return service.start(search_id)
 
 
 @router.delete("/{search_id}", status_code=status.HTTP_204_NO_CONTENT)

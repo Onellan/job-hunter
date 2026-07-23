@@ -27,3 +27,16 @@ def test_missing_yaml_configuration_is_rejected(tmp_path: Path) -> None:
 
     with pytest.raises(ConfigurationError, match="does not exist"):
         Settings.from_yaml(tmp_path / "missing.yaml")
+
+
+def test_production_requires_explicit_public_host_and_secure_session() -> None:
+    """Production configuration rejects local hosts and insecure authenticated cookies."""
+
+    with pytest.raises(ValueError, match="trusted_hosts"):
+        Settings.model_validate(
+            {
+                "app": {"environment": "production"},
+                "authentication": {"enabled": True, "session_cookie_secure": True},
+                "security": {"trusted_hosts": ["localhost"]},
+            }
+        )

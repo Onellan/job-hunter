@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Resume matching · {{ application_name }}{% endblock %}
+
+{% block content %}
+<h1>Resume matching</h1>
+<p>Your submitted text is used locally to extract skills, then immediately discarded. Only derived skills and your consent timestamp are retained.</p>
+<section class="detail-grid">
+  <article>
+    <header><strong>Update local resume skills</strong></header>
+    <form method="post" action="/matching/resume" hx-post="/matching/resume" hx-target="#resume-profile" hx-swap="innerHTML">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label for="resume-content">Paste UTF-8 plain-text resume</label>
+      <textarea id="resume-content" name="content" required minlength="20" maxlength="200000"></textarea>
+      <label><input type="checkbox" name="consent" value="true" required> I consent to local extraction and storage of derived skills only.</label>
+      <button type="submit">Extract skills</button>
+    </form>
+  </article>
+  <article id="resume-profile" aria-live="polite">{% include "fragments/resume_profile.html" %}</article>
+</section>
+<article>
+  <header><strong>Compare jobs</strong></header>
+  <p>Enter two or three job IDs from the workspace, separated by commas.</p>
+  <form method="post" action="/matching/compare" hx-post="/matching/compare" hx-target="#comparison" hx-swap="innerHTML">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="job-ids">Job IDs <input id="job-ids" name="job_ids" required></label>
+    <button type="submit">Compare</button>
+  </form>
+  <div id="comparison" aria-live="polite"></div>
+</article>
+{% endblock %}

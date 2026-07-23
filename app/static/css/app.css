@@ -1,21 +1,50 @@
-/* PicoCSS supplies the base UI. These additions define application-specific layout. */
+/* PicoCSS supplies the base UI. These rules keep workspace layouts compact and responsive. */
 
-body {
-  min-height: 100vh;
-}
+body { min-height: 100vh; }
+.skip-link { left: 1rem; position: fixed; top: -4rem; z-index: 10; }
+.skip-link:focus { top: 1rem; }
 
-main.container {
-  padding-block: 4rem;
-}
+.app-header { border-bottom: 1px solid var(--pico-muted-border-color); }
+.app-header nav { padding-block: 0.75rem; }
+.app-header a, .page-heading a { display: inline-flex; align-items: center; gap: 0.4rem; }
+.brand { font-weight: 700; text-decoration: none; }
 
-.hero {
-  max-width: 48rem;
-}
+main.container { padding-block: 2rem 4rem; }
+.page-heading, .job-detail, .results-heading, .pagination, .bulk-actions, .workflow-buttons { display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
+.page-heading { margin-bottom: 1.5rem; }
+.page-heading h1, .page-heading p { margin-bottom: 0; }
 
-.status-card {
-  border-inline-start: 0.25rem solid var(--pico-primary);
-}
+.metric-grid, .dashboard-grid, .detail-grid { display: grid; gap: 1rem; }
+.metric-grid { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); margin-bottom: 1rem; }
+.metric-grid article { margin: 0; }
+.metric-grid strong { display: block; margin-top: 0.35rem; font-size: 1.1rem; }
+.dashboard-grid { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.dashboard-grid article, .detail-grid article { margin: 0; }
+.plain-list { padding: 0; margin: 0; list-style: none; }
+.plain-list li + li { margin-top: 0.75rem; }
+.plain-list small { display: block; }
 
-.status-card p:last-child {
-  margin-bottom: 0;
+.filter-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; align-items: end; padding: 1rem; border: 1px solid var(--pico-muted-border-color); border-radius: var(--pico-border-radius); }
+.filter-panel label, .filter-panel input, .filter-panel select { margin-bottom: 0; }
+.filter-checks { margin: 0; padding: 0.25rem 0 0; border: 0; }
+.filter-checks label { display: block; }
+.filter-checks input { margin-bottom: 0; }
+.results-heading { margin-top: 1.5rem; }
+.bulk-actions { justify-content: flex-start; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.bulk-actions button, .workflow-buttons button { margin-bottom: 0; }
+.table-scroll { overflow-x: auto; }
+.table-scroll table { min-width: 46rem; }
+.badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--pico-secondary-background); font-size: 0.75rem; }
+.badge.success, .status-ok { color: var(--pico-ins-color); }
+.pagination { margin-top: 1rem; flex-wrap: wrap; justify-content: flex-start; }
+
+.detail-grid { grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr); align-items: start; }
+.secondary-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); margin-top: 1rem; }
+.job-description { white-space: pre-line; overflow-wrap: anywhere; }
+.workflow-buttons { justify-content: flex-start; flex-wrap: wrap; margin-bottom: 1rem; }
+.workflow-buttons form { margin: 0; }
+
+@media (max-width: 700px) {
+  .page-heading, .job-detail { align-items: stretch; flex-direction: column; }
+  .detail-grid { grid-template-columns: 1fr; }
 }

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.job.title }} · {{ application_name }}{% endblock %}
+
+{% block content %}
+  <p><a href="/jobs">← Back to jobs</a></p>
+  <section class="job-detail">
+    <div>
+      <h1>{{ item.job.title }}</h1>
+      <p>{{ item.job.company or 'Company not listed' }} · {{ item.job.location or 'Location not listed' }}</p>
+      <p><span class="badge">{{ item.job.workplace_type.value.replace('_', ' ').title() }}</span> <span class="badge">{{ item.job.source }}</span></p>
+    </div>
+    {% if item.job.source_url %}<a href="{{ item.job.source_url }}" target="_blank" rel="noopener noreferrer" role="button">Apply at source <i data-lucide="external-link" aria-hidden="true"></i></a>{% endif %}
+  </section>
+
+  <div class="detail-grid">
+    <article>
+      <header><strong>Description</strong></header>
+      <div class="job-description">{{ item.job.description or 'The provider did not supply a description.' }}</div>
+    </article>
+    {% include "fragments/workflow_panel.html" %}
+  </div>
+
+  <section class="secondary-details" aria-labelledby="score-heading">
+    <article>
+      <header><strong id="score-heading">Match score</strong></header>
+      <p><strong>{{ score.score }}%</strong> match · {{ score.confidence }}% confidence</p>
+      <p>{{ score.reasons | join(' ') }}</p>
+      {% if score.matched_skills %}<p><strong>Matched skills:</strong> {{ score.matched_skills | join(', ') }}</p>{% endif %}
+      {% if score.missing_skills %}<p><strong>Missing skills:</strong> {{ score.missing_skills | join(', ') }}</p>{% endif %}
+    </article>
+  </section>
+
+  <section class="secondary-details">
+    <article><header><strong>Salary</strong></header><p>{% if item.job.salary_min or item.job.salary_max %}{{ item.job.salary_currency }} {{ item.job.salary_min or '—' }} – {{ item.job.salary_max or '—' }} per {{ item.job.salary_period.value }}{% else %}Not disclosed{% endif %}</p></article>
+  </section>
+{% endblock %}

@@ -22,6 +22,7 @@ classifiers = [
 ]
 dependencies = [
   "alembic>=1.14,<2",
+  "APScheduler>=3.10,<5",
   "fastapi>=0.115,<1",
   "jinja2>=3.1,<4",
   "pydantic-settings>=2.6,<3",
@@ -31,13 +32,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+jobspy = ["python-jobspy>=1.1,<2"]
+pnet = [
+  "beautifulsoup4>=4.12,<5",
+  "lxml>=5,<7",
+  "playwright>=1.50,<2",
+]
 providers = [
   "beautifulsoup4>=4.12,<5",
   "lxml>=5,<7",
   "playwright>=1.50,<2",
   "python-jobspy>=1.1,<2",
 ]
-scheduler = ["APScheduler>=3.10,<5"]
 exports = ["XlsxWriter>=3.2,<4"]
 dev = [
   "black>=24.10,<26",
@@ -48,7 +54,10 @@ dev = [
   "pytest>=8.3,<9",
   "pytest-asyncio>=1.0,<2",
   "ruff>=0.8,<1",
+  "beautifulsoup4>=4.12,<5",
+  "lxml>=5,<7",
   "types-PyYAML>=6.0.12",
+  "XlsxWriter>=3.2,<4",
 ]
 
 [project.urls]
@@ -94,5 +103,5 @@ warn_unreachable = true
 exclude = ["data"]
 
 [[tool.mypy.overrides]]
-module = ["yaml"]
+module = ["yaml", "apscheduler.*"]
 ignore_missing_imports = true

@@ -7,9 +7,25 @@
     <title>{% block title %}{{ application_name }}{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+    <script defer src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script defer src="{{ url_for('static', path='js/app.js') }}"></script>
   </head>
   <body>
-    <main class="container">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="app-header">
+      <nav class="container" aria-label="Primary navigation">
+        <ul>
+          <li><a class="brand" href="/dashboard">{{ application_name }}</a></li>
+        </ul>
+        <ul>
+          <li><a href="/dashboard"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a></li>
+          <li><a href="/jobs"><i data-lucide="briefcase-business" aria-hidden="true"></i> Jobs</a></li>
+          <li><a href="/matching"><i data-lucide="scan-search" aria-hidden="true"></i> Matching</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main-content" class="container" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
   </body>
