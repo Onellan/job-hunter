@@ -1,0 +1,5 @@
+{% if feedback_message %}
+  <p class="{{ 'form-error' if feedback_kind == 'error' else 'form-success' }}" role="{{ 'alert' if feedback_kind == 'error' else 'status' }}" aria-live="{{ 'assertive' if feedback_kind == 'error' else 'polite' }}">
+    {{ feedback_message }}{% if request_id %} Reference: {{ request_id }}.{% endif %}
+  </p>
+{% endif %}

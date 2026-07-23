@@ -104,3 +104,7 @@ browser requests require CSRF validation. The login rate limit is process-local
 and resets on restart, so it complements—not replaces—network controls at a
 reverse proxy. Production configuration rejects local/wildcard trusted hosts
 and insecure authenticated cookies.
+
+HTMX is configured before it loads to disable its optional built-in indicator
+stylesheet. This retains the strict CSP without permitting inline styles; any
+future loading indicator styling must live in `app/static/css/app.css`.

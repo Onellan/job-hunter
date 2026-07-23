@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, JsonValue, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, StringConstraints, field_validator
 
 ProviderName = Annotated[
     str,
@@ -22,6 +22,15 @@ class ProviderCreate(BaseModel):
     enabled: bool = True
     configuration: dict[str, JsonValue] = Field(default_factory=dict)
 
+    @field_validator("configuration")
+    @classmethod
+    def reject_secret_like_configuration(cls, value: dict[str, JsonValue]) -> dict[str, JsonValue]:
+        """Prevent accidental persistence of credentials in provider configuration."""
+
+        if _contains_sensitive_key(value):
+            raise ValueError("Provider configuration must not contain credentials")
+        return value
+
 
 class ProviderUpdate(BaseModel):
     """Mutable provider configuration fields."""
@@ -29,6 +38,17 @@ class ProviderUpdate(BaseModel):
     display_name: str | None = Field(default=None, min_length=1, max_length=100)
     enabled: bool | None = None
     configuration: dict[str, JsonValue] | None = None
+
+    @field_validator("configuration")
+    @classmethod
+    def reject_secret_like_configuration(
+        cls, value: dict[str, JsonValue] | None
+    ) -> dict[str, JsonValue] | None:
+        """Apply the same non-secret policy to partial provider updates."""
+
+        if value is not None and _contains_sensitive_key(value):
+            raise ValueError("Provider configuration must not contain credentials")
+        return value
 
 
 class ProviderRecord(ProviderCreate):
@@ -39,3 +59,36 @@ class ProviderRecord(ProviderCreate):
     id: UUID
     created_at: datetime
     updated_at: datetime
+
+
+def _contains_sensitive_key(value: object) -> bool:
+    """Detect common credential keys recursively without inspecting values."""
+
+    sensitive_parts = (
+        "password",
+        "token",
+        "secret",
+        "apikey",
+        "authorization",
+        "cookie",
+        "credential",
+        "privatekey",
+        "bearer",
+        "session",
+        "headers",
+    )
+    if isinstance(value, dict):
+        return any(
+            any(part in _normalise_key(str(key)) for part in sensitive_parts)
+            or _contains_sensitive_key(child)
+            for key, child in value.items()
+        )
+    if isinstance(value, list):
+        return any(_contains_sensitive_key(child) for child in value)
+    return False
+
+
+def _normalise_key(value: str) -> str:
+    """Normalise casing and separators before checking a configuration key."""
+
+    return "".join(character for character in value.casefold() if character.isalnum())

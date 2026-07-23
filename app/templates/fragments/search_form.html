@@ -1,0 +1,24 @@
+{% if form_error %}<p class="form-error" role="alert">{{ form_error }}</p>{% endif %}
+<form method="post" action="{{ action }}" class="search-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Search name <input name="name" value="{{ form_values.name }}" required maxlength="150"></label>
+  <label>Keywords <input name="keywords" value="{{ form_values.keywords }}" maxlength="500" placeholder="python, data engineer"></label>
+  <label>Boolean query <input name="boolean_query" value="{{ form_values.boolean_query }}" maxlength="500" placeholder="python AND fastapi"></label>
+  <label>Exclude keywords <input name="excluded_keywords" value="{{ form_values.excluded_keywords }}" maxlength="500"></label>
+  <label>Locations <input name="locations" value="{{ form_values.locations }}" maxlength="500" placeholder="Cape Town, remote"></label>
+  <label>Workplace
+    <select name="remote_preference">
+      {% for value, label in [('any', 'Any'), ('remote', 'Remote'), ('hybrid', 'Hybrid'), ('on_site', 'On site')] %}
+        <option value="{{ value }}" {% if form_values.remote_preference == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Minimum salary <input type="number" name="minimum_salary" value="{{ form_values.minimum_salary }}" min="0" step="0.01"></label>
+  <label>Experience levels <input name="experience_levels" value="{{ form_values.experience_levels }}" maxlength="500" placeholder="mid, senior"></label>
+  <label>Posted within days <input type="number" name="posted_within_days" value="{{ form_values.posted_within_days }}" min="1" max="365"></label>
+  <label>Provider codes <input name="provider_codes" value="{{ form_values.provider_codes }}" maxlength="500" placeholder="pnet, jobspy"></label>
+  <label>Include companies <input name="included_companies" value="{{ form_values.included_companies }}" maxlength="500"></label>
+  <label>Exclude companies <input name="excluded_companies" value="{{ form_values.excluded_companies }}" maxlength="500"></label>
+  <label class="checkbox-label"><input type="checkbox" name="enabled" value="true" {% if form_values.enabled %}checked{% endif %}> Enabled</label>
+  <button type="submit">{{ submit_label }}</button>
+</form>

@@ -15,6 +15,7 @@ from app.api.dependencies import (
 )
 from app.models.common import PaginatedResult
 from app.models.job import (
+    EmploymentType,
     JobCandidate,
     JobRecord,
     JobUpdate,
@@ -73,6 +74,9 @@ def list_job_workspace(
     text: Annotated[str | None, Query(min_length=1, max_length=200)] = None,
     source: Annotated[ProviderCode | None, Query()] = None,
     workplace_type: Annotated[WorkplaceType | None, Query()] = None,
+    location: Annotated[str | None, Query(min_length=1, max_length=300)] = None,
+    employment_type: Annotated[EmploymentType | None, Query()] = None,
+    posted_within_days: Annotated[int | None, Query(ge=1, le=30)] = None,
     bookmarked: bool | None = None,
     applied: bool | None = None,
     sort: JobSort = JobSort.RECENT,
@@ -86,6 +90,9 @@ def list_job_workspace(
             text=text,
             source=source,
             workplace_type=workplace_type,
+            location=location,
+            employment_type=employment_type,
+            posted_within_days=posted_within_days,
             bookmarked=bookmarked,
             applied=applied,
             sort=sort,

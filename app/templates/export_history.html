@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Export history · {{ application_name }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><h1>Export history</h1><p>Recent export audit events without exported job data or files.</p></div><a href="/activity" role="button" class="secondary">Activity</a></section>
+{% if events.items %}<div class="table-scroll"><table><thead><tr><th scope="col">Format</th><th scope="col">Resource</th><th scope="col">Jobs</th><th scope="col">Requested</th></tr></thead><tbody>{% for event in events.items %}<tr><td>{{ event.format.value.upper() }}</td><td>{{ event.resource }}</td><td>{{ event.selected_job_count if event.selected_job_count is not none else '—' }}</td><td>{{ event.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<article><p>No exports have been requested yet.</p></article>{% endif %}
+{% include "fragments/history_pagination.html" %}
+{% endblock %}

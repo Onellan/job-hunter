@@ -1,0 +1,10 @@
+{% if form_error %}<p class="form-error" role="alert">{{ form_error }}</p>{% endif %}
+<form method="post" action="{{ action }}" class="search-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% if show_code %}<label>Provider code <input name="code" value="{{ form_values.code }}" required maxlength="64" pattern="[a-z][a-z0-9_-]{0,63}" placeholder="jobspy"></label>{% else %}<p><strong>Provider code:</strong> {{ provider.code }}</p>{% endif %}
+  <label>Display name <input name="display_name" value="{{ form_values.display_name }}" required maxlength="100"></label>
+  <label>Non-secret JSON configuration <textarea name="configuration" rows="8" maxlength="10000" aria-describedby="configuration-help">{{ form_values.configuration }}</textarea></label>
+  <small id="configuration-help">Configuration must be a non-secret JSON object. Credentials belong in deployment configuration, never this form.</small>
+  <label class="checkbox-label"><input type="checkbox" name="enabled" value="true" {% if form_values.enabled %}checked{% endif %}> Enabled</label>
+  <button type="submit">{{ submit_label }}</button>
+</form>

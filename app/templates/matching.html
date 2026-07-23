@@ -20,12 +20,8 @@
 </section>
 <article>
   <header><strong>Compare jobs</strong></header>
-  <p>Enter two or three job IDs from the workspace, separated by commas.</p>
-  <form method="post" action="/matching/compare" hx-post="/matching/compare" hx-target="#comparison" hx-swap="innerHTML">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="job-ids">Job IDs <input id="job-ids" name="job_ids" required></label>
-    <button type="submit">Compare</button>
-  </form>
-  <div id="comparison" aria-live="polite"></div>
+  <p>Select two or three jobs from the <a href="/jobs">Jobs workspace</a> to compare them.</p>
+  {% if comparison_error %}<p class="form-error" role="alert">{{ comparison_error }}</p>{% endif %}
+  <div id="comparison" aria-live="polite">{% include "fragments/job_comparison.html" %}</div>
 </article>
 {% endblock %}

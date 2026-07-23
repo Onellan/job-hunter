@@ -28,6 +28,9 @@
         {% endfor %}
       </select>
     </label>
+    <label>Location <input type="search" name="location" value="{{ query.location or '' }}" maxlength="300" placeholder="City or region"></label>
+    <label>Employment type <select name="employment_type"><option value="">Any employment type</option>{% for value in ['full_time', 'part_time', 'contract', 'temporary', 'internship', 'other'] %}<option value="{{ value }}" {% if query.employment_type and query.employment_type.value == value %}selected{% endif %}>{{ value.replace('_', ' ').title() }}</option>{% endfor %}</select></label>
+    <label>Date posted <select name="posted_within_days"><option value="">Any date</option>{% for days, label in [(1, 'Past day'), (3, 'Past 3 days'), (7, 'Past week'), (14, 'Past 2 weeks'), (30, 'Past month')] %}<option value="{{ days }}" {% if query.posted_within_days == days %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
     <label>
       Sort
       <select name="sort">
@@ -42,6 +45,7 @@
     </fieldset>
     <input type="hidden" name="limit" value="{{ query.limit }}">
     <button type="submit"><i data-lucide="filter" aria-hidden="true"></i> Apply filters</button>
+    <a href="/jobs" role="button" class="secondary">Reset filters</a>
   </form>
 
   {% include "fragments/job_results.html" %}

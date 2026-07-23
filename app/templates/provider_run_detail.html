@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Provider run · {{ application_name }}{% endblock %}
+
+{% block content %}
+  <section class="page-heading"><div><h1>Provider run</h1><p>Safe status and outcome details for one collection attempt.</p></div><a role="button" class="secondary" href="/searches/{{ run.search_id }}">Back to saved search</a></section>
+  <article>
+    <dl class="secondary-details">
+      <div><dt>Status</dt><dd><span class="badge">{{ run.status.value }}</span></dd></div>
+      <div><dt>Results</dt><dd>{{ run.result_count }}</dd></div>
+      <div><dt>Started</dt><dd>{{ run.started_at.strftime('%Y-%m-%d %H:%M UTC') if run.started_at else 'Queued' }}</dd></div>
+      <div><dt>Finished</dt><dd>{{ run.finished_at.strftime('%Y-%m-%d %H:%M UTC') if run.finished_at else 'Not finished' }}</dd></div>
+      {% if run.error_category %}<div><dt>Error category</dt><dd>{{ run.error_category }}</dd></div>{% endif %}
+    </dl>
+    {% if run.error_summary %}<p>{{ run.error_summary }}</p>{% endif %}
+  </article>
+{% endblock %}

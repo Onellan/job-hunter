@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Notification history · {{ application_name }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><h1>Notification history</h1><p>Recent delivery outcomes. Messages, recipients, and credentials are not retained.</p></div><a href="/activity" role="button" class="secondary">Activity</a></section>
+{% if deliveries.items %}<div class="table-scroll"><table><thead><tr><th scope="col">Channel</th><th scope="col">Event</th><th scope="col">Outcome</th><th scope="col">Error category</th><th scope="col">Completed</th></tr></thead><tbody>{% for delivery in deliveries.items %}<tr><td>{{ delivery.channel.value.title() }}</td><td>{{ delivery.event_type.replace('_', ' ').title() }}</td><td>{{ delivery.status.value.title() }}</td><td>{{ delivery.error_category or '—' }}</td><td>{{ delivery.finished_at.strftime('%Y-%m-%d %H:%M UTC') if delivery.finished_at else '—' }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<article><p>No notification deliveries have been recorded yet.</p></article>{% endif %}
+{% include "fragments/history_pagination.html" %}
+{% endblock %}

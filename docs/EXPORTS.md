@@ -34,6 +34,10 @@ Without `job_ids`, the jobs endpoint applies supplied workspace filters. With
 100 identifiers. Full filtered exports iterate in database batches rather than
 loading all matching jobs into memory.
 
+The **Export history** link beside the Jobs export controls opens a paginated
+browser view of the same safe audit records. It displays only format, resource,
+matching-job count, and UTC request time.
+
 ## Audit and privacy
 
 Every export request creates one durable audit event. It records the format,

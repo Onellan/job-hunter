@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 from sqlalchemy import ColumnElement, desc, or_
 
 from app.database.tables import JobTable, JobWorkflowTable
@@ -28,6 +30,14 @@ def workspace_conditions(
         conditions.append(JobTable.source == query.source)
     if query.workplace_type:
         conditions.append(JobTable.workplace_type == query.workplace_type.value)
+    if getattr(query, "location", None):
+        conditions.append(JobTable.location.ilike(f"%{query.location}%"))
+    if getattr(query, "employment_type", None):
+        conditions.append(JobTable.employment_type == query.employment_type.value)
+    if getattr(query, "posted_within_days", None):
+        conditions.append(
+            JobTable.published_at >= datetime.now(UTC) - timedelta(days=query.posted_within_days)
+        )
     if query.bookmarked is not None:
         conditions.append(_workflow_boolean_condition("is_bookmarked", query.bookmarked))
     if query.applied is not None:

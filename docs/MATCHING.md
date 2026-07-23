@@ -18,6 +18,11 @@ send any information to an external AI service. `POST /api/v1/jobs/compare`
 compares two or three existing jobs on demand; comparison results are not
 persisted.
 
+In the browser, select two or three jobs in the Jobs workspace and choose
+**Compare selected**. The comparison form deliberately never asks users to
+copy durable job identifiers. The form remains a normal HTML POST when
+JavaScript is unavailable.
+
 Resume-derived skills are sensitive personal data. Enable authentication before
 using this feature on a shared or network-accessible deployment, and remember
 that SQLite backups include the derived skill profile. Do not commit real

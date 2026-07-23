@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Saved searches · {{ application_name }}{% endblock %}
+
+{% block content %}
+  <section class="page-heading"><div><h1>Saved searches</h1><p>Create reusable criteria and run them against enabled providers.</p></div></section>
+  <section class="detail-grid">
+    <article><header><strong>Create saved search</strong></header>{% set action = '/searches' %}{% set submit_label = 'Save search' %}{% include 'fragments/search_form.html' %}</article>
+    <article><header><strong>Saved searches</strong></header>
+      {% if searches %}<ul class="plain-list">{% for search in searches %}<li><a href="/searches/{{ search.id }}"><strong>{{ search.name }}</strong></a><small>{{ 'Enabled' if search.enabled else 'Disabled' }} · Updated {{ search.updated_at.strftime('%Y-%m-%d %H:%M UTC') }}</small></li>{% endfor %}</ul>
+      {% else %}<p>No saved searches yet. Create one to collect matching jobs.</p>{% endif %}
+    </article>
+  </section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% if message %}<p class="status-message" role="status">{{ message }}</p>{% endif %}
+{% if runs.items %}
+  <div class="table-scroll"><table><thead><tr><th scope="col">Status</th><th scope="col">Results</th><th scope="col">Started</th><th scope="col">Details</th></tr></thead><tbody>
+  {% for run in runs.items %}<tr><td><a href="/provider-runs/{{ run.id }}"><span class="badge">{{ run.status.value }}</span></a></td><td>{{ run.result_count }}</td><td>{{ run.started_at.strftime('%Y-%m-%d %H:%M UTC') if run.started_at else 'Queued' }}</td><td>{{ run.error_summary or '—' }}</td></tr>{% endfor %}
+  </tbody></table></div>
+{% else %}<p>No provider runs yet. Run this search after enabling a provider.</p>{% endif %}
