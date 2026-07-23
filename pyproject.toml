@@ -23,16 +23,23 @@ classifiers = [
 dependencies = [
   "alembic>=1.14,<2",
   "APScheduler>=3.10,<5",
+  "beautifulsoup4>=4.12,<5",
   "fastapi>=0.115,<1",
   "jinja2>=3.1,<4",
+  "lxml>=5,<7",
+  "playwright>=1.50,<2",
   "pydantic-settings>=2.6,<3",
+  "python-jobspy @ https://github.com/Onellan/JobSpy/archive/7160d0faeda408d246e6948f2cc28ec253883375.tar.gz",
   "PyYAML>=6,<7",
   "sqlmodel>=0.0.22,<1",
   "uvicorn[standard]>=0.30,<1",
+  "XlsxWriter>=3.2,<4",
 ]
 
 [project.optional-dependencies]
-jobspy = ["python-jobspy>=1.1,<2"]
+jobspy = [
+  "python-jobspy @ https://github.com/Onellan/JobSpy/archive/7160d0faeda408d246e6948f2cc28ec253883375.tar.gz",
+]
 pnet = [
   "beautifulsoup4>=4.12,<5",
   "lxml>=5,<7",
@@ -42,7 +49,7 @@ providers = [
   "beautifulsoup4>=4.12,<5",
   "lxml>=5,<7",
   "playwright>=1.50,<2",
-  "python-jobspy>=1.1,<2",
+  "python-jobspy @ https://github.com/Onellan/JobSpy/archive/7160d0faeda408d246e6948f2cc28ec253883375.tar.gz",
 ]
 exports = ["XlsxWriter>=3.2,<4"]
 dev = [
@@ -69,6 +76,9 @@ job-hunter = "app.main:run"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.pytest.ini_options]
 addopts = "-ra"

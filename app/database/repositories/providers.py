@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import func
+from sqlalchemy.dialects.sqlite import insert
 from sqlmodel import Session, select
 
 from app.database.mappers import to_provider_record
@@ -44,6 +46,28 @@ class SqliteProviderRepository:
         commit_or_raise_conflict(self._session)
         self._session.refresh(table)
         return to_provider_record(table)
+
+    def create_missing(self, providers: Sequence[ProviderCreate], now: datetime) -> None:
+        """Create missing provider codes atomically without replacing user-owned values."""
+
+        if not providers:
+            return
+        values = [
+            {
+                "code": provider.code,
+                "display_name": provider.display_name,
+                "enabled": provider.enabled,
+                "configuration": provider.model_dump(mode="json")["configuration"],
+                "created_at": now,
+                "updated_at": now,
+            }
+            for provider in providers
+        ]
+        statement = (
+            insert(ProviderTable).values(values).on_conflict_do_nothing(index_elements=["code"])
+        )
+        self._session.exec(statement)
+        self._session.commit()
 
     def update(
         self,

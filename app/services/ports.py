@@ -146,6 +146,9 @@ class ProviderRepository(Protocol):
     def create(self, provider: ProviderCreate, now: datetime) -> ProviderRecord:
         """Persist a provider registration."""
 
+    def create_missing(self, providers: Sequence[ProviderCreate], now: datetime) -> None:
+        """Create only missing provider codes without changing existing rows."""
+
     def update(
         self,
         provider_id: UUID,

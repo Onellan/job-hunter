@@ -50,9 +50,11 @@ app/
 ## Resource constraints
 
 The application runs in one Uvicorn process and starts without opening a
-database connection. Playwright, JobSpy, spreadsheet support, and scheduling
-are optional dependency groups until their milestones. This keeps the base
-image and idle process small while preserving a clear path to those features.
+database connection. The normal runtime includes the discovered JobSpy and
+Pnet provider dependencies plus spreadsheet export support. Playwright starts
+no browser at application startup; Docker bakes Chromium into the image and
+bare-metal startup only checks its local executable path. This keeps idle
+resource use small while making the built-in providers deployable by default.
 
 SQLite is accessed through SQLModel/SQLAlchemy. The connection URL is
 configuration-driven, so repository code can later be run against PostgreSQL

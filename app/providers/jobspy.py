@@ -10,6 +10,7 @@ from typing import Any, cast
 from pydantic import HttpUrl, JsonValue, ValidationError
 
 from app.models.job import EmploymentType, JobCandidate, SalaryPeriod, WorkplaceType
+from app.models.provider import ProviderAvailabilityReason
 from app.models.search import RemotePreference, SearchCriteria
 from app.providers.base import BaseProvider
 from app.providers.errors import (
@@ -21,13 +22,37 @@ from app.providers.errors import (
 
 _DEFAULT_RESULT_LIMIT = 25
 _MAX_RESULT_LIMIT = 100
+DEFAULT_SITES = ("indeed", "linkedin", "glassdoor")
+_SUPPORTED_SITES = frozenset(DEFAULT_SITES)
+_DEFAULT_COUNTRY_INDEED = "South Africa"
 
 
 class JobSpyProvider(BaseProvider):
-    """Acquire JobSpy listings through its optional Python dependency."""
+    """Acquire JobSpy listings through the supported JobSpy runtime dependency."""
 
     code = "jobspy"
     display_name = "JobSpy"
+    bootstrap_by_default = True
+
+    @classmethod
+    def default_configuration(cls) -> dict[str, JsonValue]:
+        """Return the verified JobSpy portal defaults for a newly discovered row."""
+
+        return {
+            "sites": list(DEFAULT_SITES),
+            "country_indeed": _DEFAULT_COUNTRY_INDEED,
+            "results_wanted": _DEFAULT_RESULT_LIMIT,
+        }
+
+    @classmethod
+    def availability_reason(cls) -> ProviderAvailabilityReason | None:
+        """Classify a missing local JobSpy package without importing a portal client."""
+
+        try:
+            _load_jobspy_scraper()
+        except ProviderDependencyError:
+            return "dependency_unavailable"
+        return None
 
     def __init__(self, scrape_jobs: Callable[..., Any] | None = None) -> None:
         """Allow tests to inject a deterministic JobSpy-compatible scraper."""
@@ -74,9 +99,18 @@ def _build_jobspy_arguments(
     if criteria.excluded_keywords:
         search_term = f"{search_term} {' '.join(f'-{term}' for term in criteria.excluded_keywords)}"
 
-    sites = configuration.get("sites", ["indeed"])
-    if not isinstance(sites, list) or not sites or not all(isinstance(site, str) for site in sites):
+    configured_sites = configuration.get("sites", list(DEFAULT_SITES))
+    if (
+        not isinstance(configured_sites, list)
+        or not configured_sites
+        or not all(isinstance(site, str) for site in configured_sites)
+    ):
         raise ProviderConfigurationError("JobSpy configuration requires a non-empty sites list")
+    sites = [site for site in configured_sites if isinstance(site, str)]
+    unsupported_sites = sorted(set(sites) - _SUPPORTED_SITES)
+    if unsupported_sites:
+        names = ", ".join(unsupported_sites)
+        raise ProviderConfigurationError(f"JobSpy does not support configured sites: {names}")
 
     arguments: dict[str, Any] = {
         "site_name": sites,
@@ -89,7 +123,7 @@ def _build_jobspy_arguments(
     if criteria.remote_preference == RemotePreference.REMOTE:
         arguments["is_remote"] = True
 
-    country = configuration.get("country_indeed")
+    country = configuration.get("country_indeed", _DEFAULT_COUNTRY_INDEED)
     if isinstance(country, str) and country:
         arguments["country_indeed"] = country
     return {name: value for name, value in arguments.items() if value is not None}

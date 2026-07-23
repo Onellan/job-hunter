@@ -83,7 +83,11 @@ def test_provider_search_and_run_resources_enforce_lifecycle(api_client: TestCli
 
     provider = api_client.post(
         "/api/v1/providers",
-        json={"code": "jobspy", "display_name": "JobSpy", "configuration": {"limit": 25}},
+        json={
+            "code": "lifecycle-provider",
+            "display_name": "Lifecycle provider",
+            "configuration": {"limit": 25},
+        },
     )
     search = api_client.post(
         "/api/v1/searches",

@@ -25,7 +25,8 @@ The image health check calls the local health endpoint after migrations finish.
 
 ## Bare-metal service
 
-Install the base package when no live provider adapter is enabled:
+Install the normal package with all discovered built-in provider and export
+dependencies:
 
 ```powershell
 python -m pip install .
@@ -33,35 +34,24 @@ python -m alembic upgrade head
 job-hunter
 ```
 
-To enable the JobSpy adapter, install its focused optional extra before the
-service starts:
-
-```powershell
-python -m pip install ".[jobspy]"
-```
-
-To enable the Pnet Playwright adapter, install its focused extra and Chromium
-browser in the derived image or host environment:
-
-```powershell
-python -m pip install ".[pnet]"
-python -m playwright install --with-deps chromium
-```
+Docker includes Pnet's Chromium browser. On bare metal, the startup diagnostic
+inspects only a locally provisioned browser executable. It does not launch a
+browser, download software, or contact a provider; a missing browser logs a
+safe Pnet-unavailable diagnostic and does not stop the service.
 
 Pnet is intentionally limited to one provider run by the existing
 `provider_execution` default. Its Chromium process is short-lived and closes
 at the end of each run; do not add application workers on a 1 GB device.
 
-For Docker, build a small derived image that installs the same extra. Do not
-install the broad `providers` extra on a 1 GB device unless its additional
-Playwright tooling is required by enabled adapters.
+The supplied Docker image installs the same Python dependencies plus Chromium
+and its Linux libraries at build time while it is still root. Its portable
+Playwright install selects the build platform's supported `linux/amd64` or
+`linux/arm64` browser package, then the container drops to the unprivileged
+application user. Container startup performs no provider installation or
+browser download.
 
-CSV, JSON, and SQLite backup exports work with the base package. Excel export
-requires the focused optional extra:
-
-```powershell
-python -m pip install ".[exports]"
-```
+CSV, JSON, SQLite backup, and Excel exports are all available in the normal
+runtime installation.
 
 XLSX and SQLite backup downloads use temporary files while keeping RAM bounded.
 Ensure the process can write to the operating system temporary directory and

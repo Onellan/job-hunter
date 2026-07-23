@@ -17,8 +17,8 @@ from app.database.engine import create_database_engine
 from app.models.search import SearchCriteria
 from app.providers.errors import ProviderConfigurationError
 from app.providers.execution import BoundedProviderExecutor
-from app.providers.jobspy import JobSpyProvider
-from app.providers.pnet import PnetProvider, PnetSettings
+from app.providers.jobspy import DEFAULT_SITES, JobSpyProvider, _build_jobspy_arguments
+from app.providers.pnet import PnetProvider, PnetSettings, check_pnet_runtime
 from app.providers.registry import ProviderRegistry
 
 
@@ -164,6 +164,49 @@ def test_jobspy_provider_normalises_a_fixture_without_live_network_access() -> N
     assert candidates[0].salary_period == "year"
 
 
+def test_jobspy_uses_the_supported_default_sites_and_south_africa_country() -> None:
+    """The selected JobSpy release receives only the verified provider defaults."""
+
+    arguments = _build_jobspy_arguments(SearchCriteria(keywords=["engineer"]), {})
+
+    assert arguments["site_name"] == list(DEFAULT_SITES)
+    assert arguments["country_indeed"] == "South Africa"
+    assert arguments["results_wanted"] == 25
+
+
+def test_jobspy_rejects_sites_outside_the_supported_allow_list() -> None:
+    """An unsupported portal name is rejected before the scraper can make a request."""
+
+    with pytest.raises(ProviderConfigurationError, match="google"):
+        _build_jobspy_arguments(SearchCriteria(keywords=["engineer"]), {"sites": ["google"]})
+
+
+def test_pnet_runtime_check_reports_a_missing_local_browser_without_launching(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """The startup diagnostic checks only a mocked local executable path."""
+
+    def missing_browser_path() -> str:
+        return "C:/missing/playwright/chromium"
+
+    monkeypatch.setattr("app.providers.pnet._chromium_executable_path", missing_browser_path)
+
+    assert check_pnet_runtime() == "browser_unavailable"
+
+
+def test_pnet_runtime_check_reports_a_missing_python_dependency(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """The startup diagnostic classifies a missing local Playwright import safely."""
+
+    def missing_playwright() -> str:
+        raise ModuleNotFoundError("playwright")
+
+    monkeypatch.setattr("app.providers.pnet._chromium_executable_path", missing_playwright)
+
+    assert check_pnet_runtime() == "dependency_unavailable"
+
+
 def test_manual_execution_is_non_blocking_and_isolates_provider_failures(
     provider_api_client: TestClient,
 ) -> None:
@@ -220,7 +263,7 @@ def test_bounded_executor_rejects_work_when_its_capacity_is_full(
 
 
 def _create_fixture_providers(client: TestClient) -> set[str]:
-    """Register deterministic providers and return their configured codes."""
+    """Register deterministic fixture rows and return their configured codes."""
 
     registrations = (
         {"code": "fixture", "display_name": "Fixture Provider"},

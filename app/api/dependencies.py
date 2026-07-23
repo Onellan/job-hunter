@@ -110,10 +110,16 @@ def get_notification_service(
     return NotificationService(SqliteNotificationRepository(session))
 
 
-def get_provider_service(session: Annotated[Session, Depends(get_session)]) -> ProviderService:
+def get_provider_service(
+    request: Request,
+    session: Annotated[Session, Depends(get_session)],
+) -> ProviderService:
     """Return a provider service with a request-scoped SQLite repository."""
 
-    return ProviderService(SqliteProviderRepository(session))
+    return ProviderService(
+        SqliteProviderRepository(session),
+        request.app.state.provider_availability,
+    )
 
 
 def get_search_service(session: Annotated[Session, Depends(get_session)]) -> SearchService:

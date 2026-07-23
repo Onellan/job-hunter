@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, StringConstraints, field_validator
@@ -12,6 +12,37 @@ ProviderName = Annotated[
     str,
     StringConstraints(pattern=r"^[a-z][a-z0-9_-]{1,63}$", strip_whitespace=True),
 ]
+ProviderAvailabilityReason = Literal["dependency_unavailable", "browser_unavailable"]
+
+
+class ProviderDefinition(BaseModel):
+    """Provider-owned defaults and safe local runtime availability."""
+
+    code: ProviderName
+    display_name: str = Field(min_length=1, max_length=100)
+    enabled: bool = True
+    configuration: dict[str, JsonValue] = Field(default_factory=dict)
+    availability_reason: ProviderAvailabilityReason | None = None
+    bootstrap: bool = False
+
+    @field_validator("configuration")
+    @classmethod
+    def reject_secret_like_configuration(cls, value: dict[str, JsonValue]) -> dict[str, JsonValue]:
+        """Keep discovery-owned defaults subject to the normal secret policy."""
+
+        if _contains_sensitive_key(value):
+            raise ValueError("Provider configuration must not contain credentials")
+        return value
+
+    def as_create(self) -> ProviderCreate:
+        """Return the durable fields required when the provider row is missing."""
+
+        return ProviderCreate(
+            code=self.code,
+            display_name=self.display_name,
+            enabled=self.enabled,
+            configuration=self.configuration,
+        )
 
 
 class ProviderCreate(BaseModel):
@@ -59,6 +90,7 @@ class ProviderRecord(ProviderCreate):
     id: UUID
     created_at: datetime
     updated_at: datetime
+    availability_reason: ProviderAvailabilityReason | None = None
 
 
 def _contains_sensitive_key(value: object) -> bool:

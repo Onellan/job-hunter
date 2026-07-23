@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- PROV-002 bootstraps missing discovered JobSpy and Pnet provider rows after
+  migrations while preserving existing provider state. The provider API and UI
+  now expose a safe, transient local availability category without persisting
+  it or contacting a portal.
+
+- PROV-001 includes JobSpy, Playwright, Pnet HTML parsing, and XLSX export
+  dependencies in normal installs. JobSpy is pinned to an immutable,
+  metadata-only compatibility fork commit instead of its incompatible PyPI
+  dependency metadata; Docker now bakes portable Chromium support into its
+  root build layer and Pnet startup diagnostics remain local-only. The
+  diagnostic now runs outside FastAPI's event-loop thread so its synchronous
+  Playwright path check does not falsely report Docker Chromium as missing.
+
 - UI-001 canonicalises blank optional Jobs filters before validation, so an
   untouched filter form remains a usable workspace view.
 - UI-002 configures HTMX without its runtime inline indicator stylesheet,

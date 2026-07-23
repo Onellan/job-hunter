@@ -11,7 +11,7 @@ creates a consistent copy of the entire file-backed database.
 |---|---|---|
 | CSV | Streams rows immediately | Base package |
 | JSON | Streams one JSON array item at a time | Base package |
-| XLSX | Uses XlsxWriter constant-memory mode and a temporary file | `.[exports]` |
+| XLSX | Uses XlsxWriter constant-memory mode and a temporary file | Normal runtime |
 | SQLite | Uses SQLite's online backup API and a temporary file | File-backed SQLite only |
 
 CSV and Excel cells are protected against spreadsheet formula injection from

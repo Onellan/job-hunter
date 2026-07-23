@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
+from sqlmodel import SQLModel
+
+from app.core.config import Settings
+from app.database import tables as _tables  # noqa: F401
+from app.database.engine import create_database_engine
+from app.main import create_app
+from app.providers.registry import ProviderRegistry
 
 
 def test_saved_search_create_and_edit_forms_are_server_rendered(api_client: TestClient) -> None:
@@ -39,20 +46,24 @@ def test_saved_search_create_and_edit_forms_are_server_rendered(api_client: Test
     assert "python, fastapi" not in detail.text
 
 
-def test_saved_search_validation_and_run_feedback_stay_in_html(api_client: TestClient) -> None:
+def test_saved_search_validation_and_run_feedback_stay_in_html(settings: Settings) -> None:
     """Invalid forms and missing providers yield accessible local feedback rather than JSON."""
 
-    invalid = api_client.post("/searches", data={"name": "", "remote_preference": "any"})
-    created = api_client.post(
-        "/searches",
-        data={"name": "No providers", "enabled": "true"},
-        follow_redirects=False,
-    )
-    detail_url = created.headers["location"]
-    run = api_client.post(
-        f"{detail_url}/run",
-        headers={"HX-Request": "true"},
-    )
+    engine = create_database_engine(settings.database)
+    SQLModel.metadata.create_all(engine)
+    engine.dispose()
+    with TestClient(create_app(settings, ProviderRegistry([]))) as client:
+        invalid = client.post("/searches", data={"name": "", "remote_preference": "any"})
+        created = client.post(
+            "/searches",
+            data={"name": "No providers", "enabled": "true"},
+            follow_redirects=False,
+        )
+        detail_url = created.headers["location"]
+        run = client.post(
+            f"{detail_url}/run",
+            headers={"HX-Request": "true"},
+        )
 
     assert invalid.status_code == 422
     assert "form-error" in invalid.text

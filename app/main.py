@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -10,6 +11,8 @@ from pathlib import Path
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.engine import Engine
+from sqlmodel import Session
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.errors import register_exception_handlers
@@ -23,11 +26,14 @@ from app.core.middleware import (
 )
 from app.core.rate_limits import LoginRateLimiter
 from app.database.engine import create_database_engine
+from app.database.repositories import SqliteProviderRepository
+from app.models.provider import ProviderDefinition
 from app.providers.execution import BoundedProviderExecutor
 from app.providers.registry import ProviderRegistry
 from app.routers.audit import router as audit_router
 from app.routers.web import router as web_router
 from app.scheduler.runtime import SchedulerRuntime
+from app.services.providers import ProviderService
 
 logger = logging.getLogger(__name__)
 STATIC_DIRECTORY = Path(__file__).resolve().parent / "static"
@@ -57,6 +63,28 @@ def create_app(
         configure_logging(resolved_settings.logging)
         application.state.settings = resolved_settings
         application.state.engine = create_database_engine(resolved_settings.database)
+        # Migrations are applied by the deployment entry point before this
+        # application process starts. Bootstrap runs next, before work can be
+        # submitted to the executor or scheduler.
+        provider_definitions = await asyncio.to_thread(resolved_registry.definitions)
+        await asyncio.to_thread(
+            _bootstrap_provider_definitions,
+            application.state.engine,
+            tuple(definition for definition in provider_definitions if definition.bootstrap),
+        )
+        application.state.provider_availability = {
+            definition.code: definition.availability_reason for definition in provider_definitions
+        }
+        application.state.provider_registry = resolved_registry
+        for definition in provider_definitions:
+            if definition.availability_reason is not None:
+                logger.warning(
+                    "provider_runtime_unavailable",
+                    extra={
+                        "provider_code": definition.code,
+                        "category": definition.availability_reason,
+                    },
+                )
         application.state.login_rate_limiter = LoginRateLimiter(
             resolved_settings.authentication.login_max_attempts,
             resolved_settings.authentication.login_window_seconds,
@@ -119,3 +147,13 @@ def run() -> None:
         port=settings.server.port,
         proxy_headers=True,
     )
+
+
+def _bootstrap_provider_definitions(
+    engine: Engine,
+    definitions: tuple[ProviderDefinition, ...],
+) -> None:
+    """Persist missing discovered providers after migrations and before work starts."""
+
+    with Session(engine) as session:
+        ProviderService(SqliteProviderRepository(session)).bootstrap(definitions)

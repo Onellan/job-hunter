@@ -26,26 +26,12 @@ uvicorn app.main:app --reload
 Open <http://127.0.0.1:8000>. The health endpoint is available at
 <http://127.0.0.1:8000/api/v1/health>.
 
-To execute live JobSpy searches, install its optional dependency as well:
-
-```powershell
-python -m pip install -e ".[dev,jobspy]"
-```
-
-To enable the direct Pnet adapter, install its focused browser and parser
-dependencies, then install the supported Playwright Chromium browser:
-
-```powershell
-python -m pip install -e ".[pnet]"
-python -m playwright install chromium
-```
-
-To enable Excel exports in a production installation, add the focused optional
-extra:
-
-```powershell
-python -m pip install ".[exports]"
-```
+The normal development installation includes JobSpy, Playwright, Pnet's HTML
+parsers, and XLSX export support. Startup checks for a locally available
+Playwright Chromium executable without launching a browser, downloading
+software, or contacting a portal. If the operating system does not provide a
+browser, the application continues to start and safely reports Pnet as
+unavailable.
 
 Scheduling is included in the normal installation. It uses one in-process
 dispatcher thread and the existing bounded provider executor; run a single app

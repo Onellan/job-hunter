@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from time import sleep
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import quote, urlencode, urljoin
 
 from pydantic import BaseModel, Field, HttpUrl, JsonValue, ValidationError
@@ -26,7 +27,7 @@ _DEFAULT_BASE_URL = "https://www.pnet.co.za/jobs"
 _DEFAULT_MAX_PAGES = 2
 _MAX_PAGES = 10
 _DEFAULT_TIMEOUT_MS = 30_000
-_DEFAULT_RATE_LIMIT_DELAY_MS = 1_000
+_DEFAULT_RATE_LIMIT_DELAY_MS = 1_500
 _DEFAULT_RETRY_ATTEMPTS = 1
 _MAX_RETRY_ATTEMPTS = 2
 _LISTING_SELECTOR = "article[data-testid='job-card'], article.job-card, article.job-item"
@@ -38,6 +39,7 @@ _DETAIL_SELECTOR = "[data-testid='job-meta'], .job-meta, .job-details"
 
 PageLoader = Callable[[Sequence[str], "PnetSettings"], Iterable[str]]
 SleepFunction = Callable[[float], None]
+PnetRuntimeDiagnostic = Literal["dependency_unavailable", "browser_unavailable"]
 
 
 class PnetSettings(BaseModel):
@@ -68,6 +70,24 @@ class PnetProvider(BaseProvider):
 
     code = "pnet"
     display_name = "Pnet"
+    bootstrap_by_default = True
+
+    @classmethod
+    def default_configuration(cls) -> dict[str, JsonValue]:
+        """Return the conservative Pnet defaults for a newly discovered row."""
+
+        return {
+            "max_pages": _DEFAULT_MAX_PAGES,
+            "timeout_ms": _DEFAULT_TIMEOUT_MS,
+            "rate_limit_delay_ms": _DEFAULT_RATE_LIMIT_DELAY_MS,
+            "retry_attempts": _DEFAULT_RETRY_ATTEMPTS,
+        }
+
+    @classmethod
+    def availability_reason(cls) -> PnetRuntimeDiagnostic | None:
+        """Return the local Playwright/Chromium availability category."""
+
+        return check_pnet_runtime()
 
     def __init__(
         self,
@@ -176,6 +196,24 @@ class PnetProvider(BaseProvider):
                 raise
             self._sleeper(_retry_delay_seconds(settings.rate_limit_delay_ms, attempt))
         raise ProviderExecutionError("Pnet retry loop ended unexpectedly")
+
+
+def check_pnet_runtime() -> PnetRuntimeDiagnostic | None:
+    """Return a safe local diagnostic when Pnet cannot start its Chromium browser.
+
+    This check imports Playwright and inspects its configured Chromium executable
+    path only. It does not launch a browser, download software, or contact Pnet.
+    """
+
+    try:
+        executable_path = _chromium_executable_path()
+    except ModuleNotFoundError:
+        return "dependency_unavailable"
+    except Exception:
+        # This is an isolated startup diagnostic. A broken local Playwright
+        # installation must not prevent the application from serving other providers.
+        return "browser_unavailable"
+    return None if Path(executable_path).is_file() else "browser_unavailable"
 
 
 def _settings_from(configuration: Mapping[str, JsonValue]) -> PnetSettings:
@@ -354,3 +392,12 @@ def _load_playwright() -> tuple[Callable[[], Any], type[Exception], type[Excepti
     except ModuleNotFoundError as exception:
         raise ProviderDependencyError() from exception
     return sync_playwright, TimeoutError, Error
+
+
+def _chromium_executable_path() -> str:
+    """Return Playwright's local Chromium path without launching a browser."""
+
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as playwright:
+        return str(playwright.chromium.executable_path)

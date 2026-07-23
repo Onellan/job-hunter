@@ -7,6 +7,7 @@ import pkgutil
 from collections.abc import Iterable
 from importlib import metadata
 
+from app.models.provider import ProviderDefinition
 from app.providers.base import BaseProvider
 from app.providers.errors import ProviderRegistrationError
 
@@ -50,6 +51,13 @@ class ProviderRegistry:
             message = f"No provider plugin is registered for code: {code}"
             raise ProviderRegistrationError(message)
         return provider_type()
+
+    def definitions(self) -> tuple[ProviderDefinition, ...]:
+        """Return provider-owned defaults and local availability in stable code order."""
+
+        return tuple(
+            self._provider_types[code].definition() for code in sorted(self._provider_types)
+        )
 
     def _register(self, provider_type: type[BaseProvider]) -> None:
         """Validate one plugin class and reject ambiguous provider codes."""
