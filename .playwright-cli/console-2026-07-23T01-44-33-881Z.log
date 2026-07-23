@@ -1,0 +1,1 @@
+[     164ms] [ERROR] Applying inline style violates the following Content Security Policy directive 'style-src 'self' https://cdn.jsdelivr.net'. Either the 'unsafe-inline' keyword, a hash ('sha256-bsV5JivYxvGywDAZ22EZJKBFip65Ng9xoJVLbBg7bdo='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ https://unpkg.com/htmx.org@2.0.4:0

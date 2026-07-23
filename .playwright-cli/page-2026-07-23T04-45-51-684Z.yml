@@ -1,0 +1,69 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - navigation "Primary navigation" [ref=e4]:
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Job-Hunter" [ref=e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=e16]:
+          - link "Jobs" [ref=e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=e22]:
+          - link "Searches" [ref=e23] [cursor=pointer]:
+            - /url: /searches
+        - listitem [ref=e28]:
+          - link "Providers" [ref=e29] [cursor=pointer]:
+            - /url: /providers
+        - listitem [ref=e42]:
+          - link "Matching" [ref=e43] [cursor=pointer]:
+            - /url: /matching
+        - listitem [ref=e51]:
+          - link "Operations" [ref=e52] [cursor=pointer]:
+            - /url: /runs
+  - main [ref=e55]:
+    - generic [ref=e57]:
+      - heading "Jobs" [level=1] [ref=e58]
+      - paragraph [ref=e59]: Filter, review, and track your collected opportunities.
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - text: Search jobs
+        - searchbox "Search jobs" [ref=e62]
+      - generic [ref=e63]:
+        - text: Source
+        - textbox "Source" [ref=e64]:
+          - /placeholder: Any source
+      - generic [ref=e65]:
+        - text: Workplace
+        - combobox "Workplace" [ref=e66]:
+          - option "Any workplace" [selected]
+          - option "Remote"
+          - option "Hybrid"
+          - option "On Site"
+          - option "Unknown"
+      - generic [ref=e67]:
+        - text: Sort
+        - combobox "Sort" [ref=e68]:
+          - option "Recently seen" [selected]
+          - option "Recently published"
+          - option "Title"
+          - option "Company"
+      - group [ref=e69]:
+        - generic [ref=e70] [cursor=pointer]:
+          - checkbox "Bookmarked" [ref=e71]
+          - text: Bookmarked
+        - generic [ref=e72] [cursor=pointer]:
+          - checkbox "Applied" [ref=e73]
+          - text: Applied
+      - button "Apply filters" [ref=e74] [cursor=pointer]
+    - generic [ref=e77]:
+      - paragraph [ref=e79]:
+        - strong [ref=e80]: "0"
+        - text: matching jobs
+      - article [ref=e81]:
+        - paragraph [ref=e82]: No jobs match these filters. Try clearing a filter or run a saved search.

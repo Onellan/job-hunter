@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - navigation "Primary navigation" [ref=e4]:
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Job-Hunter" [ref=e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=e16]:
+          - link "Jobs" [ref=e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=e22]:
+          - link "Matching" [ref=e23] [cursor=pointer]:
+            - /url: /matching
+  - main [ref=e31]:
+    - heading "Resume matching" [level=1] [ref=e32]
+    - paragraph [ref=e33]: Your submitted text is used locally to extract skills, then immediately discarded. Only derived skills and your consent timestamp are retained.
+    - generic [ref=e34]:
+      - article [ref=e35]:
+        - strong [ref=e37]: Update local resume skills
+        - generic [ref=e38]:
+          - generic [ref=e39]: Paste UTF-8 plain-text resume
+          - textbox "Paste UTF-8 plain-text resume" [ref=e40]
+          - generic [ref=e41] [cursor=pointer]:
+            - checkbox "I consent to local extraction and storage of derived skills only." [ref=e42]
+            - text: I consent to local extraction and storage of derived skills only.
+          - button "Extract skills" [ref=e43] [cursor=pointer]
+      - article [ref=e44]:
+        - paragraph [ref=e45]: No consented resume profile has been saved.
+    - article [ref=e46]:
+      - strong [ref=e48]: Compare jobs
+      - paragraph [ref=e49]: Enter two or three job IDs from the workspace, separated by commas.
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - text: Job IDs
+          - textbox "Job IDs" [ref=e52]
+        - button "Compare" [ref=e53] [cursor=pointer]

@@ -1,0 +1,65 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - navigation "Primary navigation" [ref=e4]:
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Job-Hunter" [ref=e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=e16]:
+          - link "Jobs" [ref=e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=e22]:
+          - link "Searches" [ref=e23] [cursor=pointer]:
+            - /url: /searches
+        - listitem [ref=e28]:
+          - link "Providers" [ref=e29] [cursor=pointer]:
+            - /url: /providers
+        - listitem [ref=e42]:
+          - link "Matching" [ref=e43] [cursor=pointer]:
+            - /url: /matching
+        - listitem [ref=e51]:
+          - link "Operations" [ref=e52] [cursor=pointer]:
+            - /url: /runs
+  - main [ref=e55]:
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - heading "Dashboard" [level=1] [ref=e58]
+        - paragraph [ref=e59]: Current search activity and the newest opportunities.
+      - button "Browse jobs" [ref=e60] [cursor=pointer]
+    - generic [ref=e64]:
+      - generic "Dashboard metrics" [ref=e65]:
+        - article [ref=e66]:
+          - text: Jobs found today
+          - strong [ref=e67]: "0"
+        - article [ref=e68]:
+          - text: Last run
+          - strong [ref=e69]:
+            - link "No completed run" [ref=e70] [cursor=pointer]:
+              - /url: /runs
+        - article [ref=e71]:
+          - text: Providers
+          - strong [ref=e72]: 0 / 0 enabled
+        - article [ref=e73]:
+          - text: Errors today
+          - strong [ref=e74]:
+            - link "0" [ref=e75] [cursor=pointer]:
+              - /url: /runs?status=failed
+        - article [ref=e76]:
+          - text: System status
+          - strong [ref=e77]: Operational
+      - generic [ref=e78]:
+        - article [ref=e79]:
+          - strong [ref=e81]: Recent searches
+          - paragraph [ref=e82]: No saved searches yet.
+        - article [ref=e83]:
+          - generic [ref=e84]:
+            - strong [ref=e85]: Latest jobs
+            - link "View all" [ref=e86] [cursor=pointer]:
+              - /url: /jobs
+          - paragraph [ref=e87]: No jobs have been collected yet.

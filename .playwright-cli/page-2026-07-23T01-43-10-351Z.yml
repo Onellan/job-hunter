@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - navigation "Primary navigation" [ref=e4]:
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Job-Hunter" [ref=e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=e16]:
+          - link "Jobs" [ref=e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=e22]:
+          - link "Matching" [ref=e23] [cursor=pointer]:
+            - /url: /matching
+  - main [ref=e31]:
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading "Dashboard" [level=1] [ref=e34]
+        - paragraph [ref=e35]: Current search activity and the newest opportunities.
+      - button "Browse jobs" [ref=e36] [cursor=pointer]
+    - generic [ref=e40]:
+      - generic "Dashboard metrics" [ref=e41]:
+        - article [ref=e42]:
+          - text: Jobs found today
+          - strong [ref=e43]: "0"
+        - article [ref=e44]:
+          - text: Last run
+          - strong [ref=e45]: No completed run
+        - article [ref=e46]:
+          - text: Providers
+          - strong [ref=e47]: 0 / 0 enabled
+        - article [ref=e48]:
+          - text: Errors today
+          - strong [ref=e49]: "0"
+        - article [ref=e50]:
+          - text: System status
+          - strong [ref=e51]: Operational
+      - generic [ref=e52]:
+        - article [ref=e53]:
+          - strong [ref=e55]: Recent searches
+          - paragraph [ref=e56]: No saved searches yet.
+        - article [ref=e57]:
+          - generic [ref=e58]:
+            - strong [ref=e59]: Latest jobs
+            - link "View all" [ref=e60] [cursor=pointer]:
+              - /url: /jobs
+          - paragraph [ref=e61]: No jobs have been collected yet.

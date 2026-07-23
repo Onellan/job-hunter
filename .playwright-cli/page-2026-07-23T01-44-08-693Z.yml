@@ -1,0 +1,42 @@
+- generic [active] [ref=f4e1]:
+  - link "Skip to main content" [ref=f4e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f4e3]:
+    - navigation "Primary navigation" [ref=f4e4]:
+      - list [ref=f4e5]:
+        - listitem [ref=f4e6]:
+          - link "Job-Hunter" [ref=f4e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=f4e8]:
+        - listitem [ref=f4e9]:
+          - link "Dashboard" [ref=f4e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=f4e16]:
+          - link "Jobs" [ref=f4e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=f4e22]:
+          - link "Matching" [ref=f4e23] [cursor=pointer]:
+            - /url: /matching
+  - main [ref=f4e31]:
+    - heading "Resume matching" [level=1] [ref=f4e32]
+    - paragraph [ref=f4e33]: Your submitted text is used locally to extract skills, then immediately discarded. Only derived skills and your consent timestamp are retained.
+    - generic [ref=f4e34]:
+      - article [ref=f4e35]:
+        - strong [ref=f4e37]: Update local resume skills
+        - generic [ref=f4e38]:
+          - generic [ref=f4e39]: Paste UTF-8 plain-text resume
+          - textbox "Paste UTF-8 plain-text resume" [ref=f4e40]
+          - generic [ref=f4e41] [cursor=pointer]:
+            - checkbox "I consent to local extraction and storage of derived skills only." [ref=f4e42]
+            - text: I consent to local extraction and storage of derived skills only.
+          - button "Extract skills" [ref=f4e43] [cursor=pointer]
+      - article [ref=f4e44]:
+        - paragraph [ref=f4e45]: No consented resume profile has been saved.
+    - article [ref=f4e46]:
+      - strong [ref=f4e48]: Compare jobs
+      - paragraph [ref=f4e49]: Enter two or three job IDs from the workspace, separated by commas.
+      - generic [ref=f4e50]:
+        - generic [ref=f4e51]:
+          - text: Job IDs
+          - textbox "Job IDs" [ref=f4e52]
+        - button "Compare" [ref=f4e53] [cursor=pointer]

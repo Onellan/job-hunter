@@ -1,0 +1,43 @@
+- generic [active] [ref=f5e1]:
+  - link "Skip to main content" [ref=f5e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f5e3]:
+    - navigation "Primary navigation" [ref=f5e4]:
+      - list [ref=f5e5]:
+        - listitem [ref=f5e6]:
+          - link "Job-Hunter" [ref=f5e7] [cursor=pointer]:
+            - /url: /dashboard
+      - list [ref=f5e8]:
+        - listitem [ref=f5e9]:
+          - link "Dashboard" [ref=f5e10] [cursor=pointer]:
+            - /url: /dashboard
+        - listitem [ref=f5e16]:
+          - link "Jobs" [ref=f5e17] [cursor=pointer]:
+            - /url: /jobs
+        - listitem [ref=f5e22]:
+          - link "Matching" [ref=f5e23] [cursor=pointer]:
+            - /url: /matching
+  - main [ref=f5e31]:
+    - generic [ref=f5e32]:
+      - article [ref=f5e33]:
+        - heading "Local access" [level=1] [ref=f5e34]
+        - paragraph [ref=f5e35]: Sign in to your self-hosted Job-Hunter workspace.
+        - generic [ref=f5e36]:
+          - generic [ref=f5e37]:
+            - text: Username
+            - textbox "Username" [ref=f5e38]
+          - generic [ref=f5e39]:
+            - text: Password
+            - textbox "Password" [ref=f5e40]
+          - button "Sign in" [ref=f5e41] [cursor=pointer]
+      - article [ref=f5e42]:
+        - heading "First-time setup" [level=2] [ref=f5e43]
+        - paragraph [ref=f5e44]: Create the sole local account once. Passwords must contain at least 12 characters.
+        - generic [ref=f5e45]:
+          - generic [ref=f5e46]:
+            - text: Username
+            - textbox "Username" [ref=f5e47]
+          - generic [ref=f5e48]:
+            - text: Password
+            - textbox "Password" [ref=f5e49]
+          - button "Create account" [ref=f5e50] [cursor=pointer]
